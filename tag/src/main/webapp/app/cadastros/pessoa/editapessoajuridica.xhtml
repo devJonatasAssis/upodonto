@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/template.xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-panelgrid.form-elements .ui-grc-2 {
+                padding-left: 60px;
+            }
+
+            @media (max-width:1024px) {
+                .ui-panelgrid.form-elements .ui-grc-2 {
+                    padding-left: 20px;
+                }
+            }
+
+            @media (max-width:640px) {
+                .ui-panelgrid.form-elements .ui-grc-2 {
+                    padding-left: 6px;
+                }
+            }
+
+            .dialogDemo label {
+                line-height: 2.1em;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <p:growl autoUpdate="true" />
+            <p:panel header="Cadastro de Pessoa Jurídica">
+                
+
+                <br />
+
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12 ui-lg-12">
+                        <div class="card card-w-title">
+                            <h:panelGrid columns="4">
+                                <p:outputLabel value="Tipo:" />
+                                <p:selectBooleanCheckbox value="#{pessoaJuridicaControle.pessoaJuridica.fornecedor}" itemLabel="Fornecedor">
+                                    <f:ajax event="change" render="frm" />
+                                </p:selectBooleanCheckbox>
+                            </h:panelGrid>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12 ui-lg-12">
+                        <div class="card card-w-title">
+                            <h1>Informações Pessoais</h1>
+                            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                                <h:panelGroup>
+                                    <h:outputText value="Data de Cadastro:" />
+                                    <p:calendar value="#{pessoaJuridicaControle.pessoaJuridica.data_Cadastro}"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Nome Fantasia:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.nome}" placeholder="EX: Mercearia do João"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Razão Social:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.razaoSocial}" placeholder="EX: Mercearia do João"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="CNPJ:"/>
+                                    <p:inputMask mask="99.999.999/9999-99" value="#{pessoaJuridicaControle.pessoaJuridica.cnpj}"
+                                                 placeholder="EX: XX.XXX.XXX/XXXX-XX"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Inscrição Estadual:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.ie}" placeholder="EX: XXXXXXXXXXX"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12 ui-lg-12">
+                        <div class="card card-w-title">
+                            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                                <h:panelGroup>
+                                    <h:outputText value="CEP:" />
+                                    <p:inputMask mask="99999-999" value="#{pessoaJuridicaControle.pessoaJuridica.cep}"
+                                                 placeholder="EX: XXXXX-XXX"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Endereço:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.endereco}"
+                                                 placeholder="Ex: Rua General Euclides Bueno"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Número:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.numero}"
+                                                 placeholder="Ex: XXX"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Bairro:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.bairro}"
+                                                 placeholder="Ex: Bairro Esperança"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Complemento:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.complemento}"
+                                                 placeholder="Ex: Apartamento"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Cidade:" />
+                                    <p:autoComplete placeholder="Digite uma Cidade" value="#{pessoaJuridicaControle.pessoaJuridica.cidade}"
+                                                    converter="#{pessoaJuridicaControle.cidadeConverter}"
+                                                    completeMethod="#{pessoaJuridicaControle.listaFiltrando}"
+                                                    forceSelection="true" var="cid" itemLabel="#{cid.nome}" itemValue="#{cid}"
+                                                    />
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Estado:" />
+                                    <p:selectOneMenu value="#{pessoaJuridicaControle.pessoaJuridica.estado}"
+                                                     converter="#{pessoaJuridicaControle.estadoConverter}">
+                                        <f:selectItems value="#{pessoaJuridicaControle.listaEstados()}"
+                                                       var="est" itemLabel="#{est.nome}" itemValue="#{est}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-g ui-fluid">
+                    <div class="ui-g-12 ui-lg-12">
+                        <div class="card card-w-title">
+                            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                                <h:panelGroup>
+                                    <h:outputText value="Telefone:" />
+                                    <p:inputMask mask="(99)9999-9999" value="#{pessoaJuridicaControle.pessoaJuridica.telefone}"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Celular:" />
+                                    <p:inputMask mask="(99)99999-9999" value="#{pessoaJuridicaControle.pessoaJuridica.celular}"/>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Email:" />
+                                    <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.email}"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                    </div>
+                </div>
+
+                <p:panel id="panelforn" rendered="#{pessoaJuridicaControle.pessoaJuridica.fornecedor=='true'}">
+                    <div class="ui-g ui-fluid">
+                        <div class="ui-g-12 ui-lg-12">
+                            <div class="card card-w-title">
+                                <h1>Informações do Fornecedor</h1>
+                                <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                                    <h:panelGroup>
+                                        <h:outputText value="Nome do Representante:" />
+                                        <p:inputText value="#{pessoaJuridicaControle.pessoaJuridica.nome_representante}"/>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup>
+                                        <h:outputText value="Telefone do Representante:" />
+                                        <p:inputMask mask="(99)9999-9999" value="#{pessoaJuridicaControle.pessoaJuridica.tel_representante}"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup>
+                                        <h:outputText value="Celular do Representante:" />
+                                        <p:inputMask mask="(99)9999-9999" value="#{pessoaJuridicaControle.pessoaJuridica.cel_representante}"/>
+                                    </h:panelGroup>
+
+                                </p:panelGrid>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+                <br/>
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" ajax="false" style="background-color: green"
+                                     action="listapessoa" actionListener="#{pessoaJuridicaControle.salvar()}"/>
+
+                    <p:commandButton value="Cancelar" icon="fa fa-close" ajax="false" style="background-color: red" 
+                                     action="listapessoa" immediate="true"/>
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

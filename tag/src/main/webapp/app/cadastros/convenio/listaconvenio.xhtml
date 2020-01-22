@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl autoUpdate="true" />
+            <h:panelGrid columns="10">
+                <p:commandButton action="#{convenioControle.novo()}" oncomplete="PF('dlgConvenio').show();" style="background-color: green"
+                                 icon="fa fa-plus" value="Novo"/>
+                :::::
+                
+                <p:commandButton value="Gerar Relatório Cadastral" icon="fa fa-line-chart" onclick="this.form.target='BLANK'"
+                                 actionListener="#{relatorioControle.relatorioCadastralConvenio()}" ajax="false"/>
+            </h:panelGrid>
+            
+            <br/>
+            
+            <p:dataTable value="#{convenioControle.listar}" var="c" emptyMessage="Não há nenhum convênio registrado"
+                         rows="20" paginator="true" paginatorPosition="bottom">
+                
+                <p:column headerText="Código" style="text-align: center">
+                    #{c.id}
+                </p:column>
+                
+                <p:column headerText="Descrição" style="text-align: center">
+                    #{c.nome}
+                </p:column>
+                
+                <p:column headerText="Data de Cadastro" style="text-align: center">
+                    <h:outputText value="#{c.data_cadastro}">
+                        <f:convertDateTime locale="pt_BR" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Status" style="text-align: center">
+                    <h:outputText value="#{c.status?'Ativo':'Inativo'}" rendered="#{c.status eq 'true'}" style="color: green"/>
+                    <h:outputText value="#{c.status?'Ativo':'Inativo'}" rendered="#{c.status eq 'false'}" style="color: red"/>
+                </p:column>
+            </p:dataTable>
+            
+            <p:dialog widgetVar="dlgConvenio" modal="true" header="Cadastro de Convênio" showEffect="slide"
+                      hideEffect="slide">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Data de Cadastro:" />
+                    <p:calendar value="#{convenioControle.convenio.data_cadastro}" disabled="true"/>
+                    
+                    <p:outputLabel value="Descrição:" />
+                    <p:inputText value="#{convenioControle.convenio.nome}" />
+                    
+                    <p:outputLabel value="Ativo:" />
+                    <p:selectBooleanCheckbox value="#{convenioControle.convenio.status}"/>
+                </h:panelGrid>
+                
+                <br/>
+                
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" style="background-color: green" ajax="false"
+                                     actionListener="#{convenioControle.salvar()}" action="listaconvenio"/>
+                    <p:commandButton value="Cancelar" icon="fa fa-close" style="background-color: red" ajax="false"
+                                     action="listaconvenio"/>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

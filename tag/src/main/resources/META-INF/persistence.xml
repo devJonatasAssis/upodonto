@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence                                           
+http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="UpOdontoPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>br.com.gerencial.entidade.Estado</class>
+    <class>br.com.gerencial.entidade.Cidade</class>
+    <class>br.com.gerencial.entidade.Pessoa</class>
+    <class>br.com.gerencial.entidade.PessoaFisica</class>
+    <class>br.com.gerencial.entidade.PessoaJuridica</class>
+    <class>br.com.gerencial.entidade.Banco</class>
+    <class>br.com.gerencial.entidade.Cargo</class>
+    <class>br.com.gerencial.entidade.Setor</class>
+    <class>br.com.gerencial.entidade.Empresa</class>
+    <class>br.com.gerencial.entidade.Despesa</class>
+    <class>br.com.gerencial.entidade.Tratamento</class>
+    <class>br.com.gerencial.entidade.Usuario</class>
+    <class>br.com.gerencial.entidade.Produto</class>
+    <class>br.com.gerencial.entidade.GrupoProduto</class>
+    <class>br.com.gerencial.entidade.Agendamento</class>
+    <class>br.com.gerencial.entidade.ContasReceber</class>
+    <class>br.com.gerencial.entidade.ContasPagar</class>
+    <class>br.com.gerencial.entidade.Compra</class>
+    <class>br.com.gerencial.entidade.Venda</class>
+    <class>br.com.gerencial.entidade.Doutor</class>
+    <class>br.com.gerencial.entidade.Convenio</class>
+    <class>br.com.gerencial.entidade.Servico</class>
+    <class>br.com.gerencial.entidade.CompraItem</class>
+    <class>br.com.gerencial.entidade.VendaItem</class>
+    <class>br.com.gerencial.entidade.AjustaEstoque</class>
+    <class>br.com.gerencial.entidade.Config_Email</class>
+    <class>br.com.gerencial.entidade.Procedimento</class>
+    <class>br.com.gerencial.entidade.ItemProcedimento</class>
+    <class>br.com.gerencial.entidade.Sala</class>
+    <class>br.com.gerencial.entidade.Cadeira</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/upodonto"/>
+      <property name="javax.persistence.jdbc.user" value="postgres"/>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="postgres"/>
+      <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+    </properties>
+  </persistence-unit>
+</persistence>

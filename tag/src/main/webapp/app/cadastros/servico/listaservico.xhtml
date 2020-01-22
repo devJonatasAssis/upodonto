@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <h:panelGrid columns="6">
+                <p:commandButton value="Novo Serviço" icon="fa fa-plus" oncomplete="PF('dlgServico').show();" 
+                                 actionListener="#{servicoControle.novo()}"
+                                 style="background-color: green"/>
+                
+                ::::
+                    <p:commandButton value="Gerar Relatório Cadastral" icon="fa fa-line-chart" onclick="this.form.target='BLANK'"
+                                     actionListener="#{relatorioControle.relatorioCadastralServico()}" ajax="false"/>
+            </h:panelGrid>
+
+            <br/>
+
+            <p:dataTable value="#{servicoControle.listar}" var="s" emptyMessage="Não há nenhum Serviço Registrado"
+                         rows="20" paginator="true" paginatorPosition="bottom">
+
+                <p:column headerText="Código">
+                    #{s.id}
+                </p:column>
+
+                <p:column headerText="Descrição do Serviço">
+                    #{s.nome}
+                </p:column>
+
+                <p:column headerText="Valor do Serviço">
+                    <p:outputLabel value="#{s.valor}">
+                        <f:convertNumber type="currency" locale="pt_BR"
+                                         currencySymbol="R$ "/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Data do Cadastro">
+                    <p:outputLabel value="#{s.data_cadastro}">
+                        <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Situação">
+                    <p:outputLabel value="#{s.status?'Ativo':'Inativo'}" rendered="#{s.status eq 'true'}" style="color: green" />
+                    <p:outputLabel value="#{s.status?'Ativo':'Inativo'}" rendered="#{s.status eq 'false'}" style="color: red" />
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog showEffect="slide" widgetVar="dlgServico" modal="true" header="Cadastro de Serviço">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Data de Cadastro:" />
+                    <p:calendar value="#{servicoControle.servico.data_cadastro}" />
+                    
+                    <h:outputText value="Nome do Serviço:" />
+                    <p:inputText value="#{servicoControle.servico.nome}" />
+                    
+                    <h:outputText value="Valor do Serviço:" />
+                    <pe:inputNumber value="#{servicoControle.servico.valor}" 
+                                    symbol="R$ " decimalSeparator=","
+                                    decimalPlaces="2"/>
+                    
+                    <h:outputText value="Ativo:" />
+                    <p:selectBooleanCheckbox value="#{servicoControle.servico.status}" />
+                </h:panelGrid>
+                
+                <br/>
+                
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" style="background-color: green"
+                                     actionListener="#{servicoControle.salvar()}"  ajax="false" action="listaservico"/>
+                    
+                    <p:commandButton value="Cancelar" style="background-color: red" ajax="false" 
+                                     action="listaservico" icon="fa fa-close"/>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

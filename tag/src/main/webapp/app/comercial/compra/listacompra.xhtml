@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <p:growl autoUpdate="true" />
+            <h:panelGrid columns="1">
+                <p:commandButton value="Nova Compra" icon="fa fa-plus" ajax="false" 
+                                 action="editacompra"
+                                 style="background-color: green"/>
+            </h:panelGrid>
+
+            <br />
+
+            <p:dataTable value="#{compraControle.listar}" var="com" emptyMessage="Não há nenhuma Compra realizada"
+                         rows="20" paginator="true" paginatorPosition="bottom">
+
+                <p:column headerText="Código" style="width: 7%">
+                    #{com.id}
+                </p:column>
+
+                <p:column headerText="Cliente" style="align-content: center;">
+                    <h:outputText value="#{com.pessoa.nome}" style="align-content: center" />
+                </p:column>
+
+                <p:column headerText="Valor" style="width: 10%; align-content: center">
+                    <h:outputText value="#{com.compraTotalLiquido}">
+                        <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Data da Compra" style="width: 15%">
+                    <h:outputText value="#{com.compraData}">
+                        <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Status" style="width: 10%">
+                    <h:outputText value="#{com.statusCompraVenda.descricao}" rendered="#{com.statusCompraVenda eq 'ABERTO'}" style="color: red"/>
+                    <h:outputText value="#{com.statusCompraVenda.descricao}" rendered="#{com.statusCompraVenda eq 'FINALIZAR'}" style="color: green"/>
+                </p:column>
+
+                <p:column>
+                    <p:commandButton icon="ui-icon-search" value="Visualizar" oncomplete="PF('verDialog').show()"/>
+                    
+                    <p:commandButton id="btEditar" icon="ui-icon-pencil" value="Editar" disabled="#{com.statusCompraVenda=='FINALIZAR'}"
+                                     style="background-color: #06bad2" action="#{compraControle.editar(com)}"
+                                     ajax="false"/>
+                    
+                    <p:commandButton icon="ui-icon-close" value="Excluir" disabled="#{com.statusCompraVenda=='FINALIZAR'}"
+                                     style="background-color: red; text-decoration: #0AC986" actionListener="#{compraControle.excluir(com)}"
+                                     ajax="false" action="ListaCompra"
+                                     onclick="if (!confirm('Deseja realmente excluir esta Compra em Aberto ?'))
+                                                     return false"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

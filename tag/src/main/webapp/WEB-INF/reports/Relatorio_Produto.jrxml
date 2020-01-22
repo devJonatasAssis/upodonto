@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Relatorio_Produto" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5aefd42c-70ca-4c5c-9984-b478be5d2382">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/jonatas/Documentos/UpgradeSistemas/upodonto/UpOdonto/UpOdonto/tag/src/main/webapp/WEB-INF/reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="produto_descricao" class="java.lang.String"/>
+	<parameter name="dtInicial" class="java.util.Date"/>
+	<parameter name="dtFinal" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT
+     produto."prod_id" AS produto_prod_id,
+     produto."prod_ativo" AS produto_prod_ativo,
+     produto."prod_codigo" AS produto_prod_codigo,
+     produto."prod_datacadastro" AS produto_prod_datacadastro,
+     produto."prod_datavalidade" AS produto_prod_datavalidade,
+     produto."prod_marca" AS produto_prod_marca,
+     produto."prod_nome" AS produto_prod_nome,
+     produto."prod_preco" AS produto_prod_preco,
+     produto."unidade" AS produto_unidade,
+     grupoproduto."grupo_descricao" AS grupoproduto_grupo_descricao,
+     produto."prod_coditerno" AS produto_prod_coditerno
+FROM
+     "public"."grupoproduto" grupoproduto INNER JOIN "public"."produto" produto ON grupoproduto."id" = produto."grupo_id"
+WHERE prod_nome LIKE $P{produto_descricao}]]>
+	</queryString>
+	<field name="produto_prod_id" class="java.lang.Long"/>
+	<field name="produto_prod_ativo" class="java.lang.Boolean"/>
+	<field name="produto_prod_codigo" class="java.lang.String"/>
+	<field name="produto_prod_datacadastro" class="java.sql.Timestamp"/>
+	<field name="produto_prod_datavalidade" class="java.sql.Timestamp"/>
+	<field name="produto_prod_marca" class="java.lang.String"/>
+	<field name="produto_prod_nome" class="java.lang.String"/>
+	<field name="produto_prod_preco" class="java.math.BigDecimal"/>
+	<field name="produto_unidade" class="java.lang.String"/>
+	<field name="grupoproduto_grupo_descricao" class="java.lang.String"/>
+	<field name="produto_prod_coditerno" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="103" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="103" uuid="c9feddb5-503d-450c-aff7-1cb8ae138005"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subReport_Cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="35" uuid="6be0f16d-afa5-4f0d-94d1-48b1ef2fbfb0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Relatório de Produto]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="13" width="100" height="20" uuid="b1844cfd-7bbe-4814-8103-7d6346a48816"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="13" width="100" height="20" uuid="a8094278-d473-40d7-b6ee-c068ac7bd2cc"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marca]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="13" width="100" height="20" uuid="6fdf4460-7108-42fe-b377-be58ad3cffad"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cód. Interno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="13" width="100" height="20" uuid="da204eaf-fc17-4253-96b0-b928851ccae1"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cód. Barras]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="13" width="74" height="20" uuid="a99e6ec5-252b-43fa-969e-da7286145a47"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="474" y="13" width="81" height="20" uuid="d5ee7fe2-8f0d-4575-a676-076c9b81d20e"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Cadastro]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="c466be48-a43c-41d4-8fa0-e23feae20f61"/>
+				<textFieldExpression><![CDATA[$F{produto_prod_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="20" uuid="dbe9fd0a-9f30-49c8-8757-ac91be289650"/>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_prod_marca}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20" uuid="02b5af5b-ac4b-4641-9d05-595ab660ead5"/>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_prod_coditerno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="100" height="20" uuid="af48a54c-e946-4f4a-af84-784e56f11b0a"/>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_prod_codigo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="400" y="0" width="74" height="20" uuid="73051121-b443-41c6-ac1e-996b44cfdb79"/>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_prod_datavalidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="474" y="0" width="81" height="20" uuid="79996375-b802-47b2-80a3-b5668382f42c"/>
+				<textElement textAlignment="Center">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{produto_prod_datacadastro}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

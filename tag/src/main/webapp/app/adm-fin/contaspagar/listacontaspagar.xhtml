@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:panelGroup id="pgList" rendered="#{contasPagarControle.layoutList}" >
+            <h:form id="frm">
+                <p:growl autoUpdate="true" />
+                <p:toolbar id="toolbar">
+                    <f:facet name="left">
+                        <p:commandButton value="Nova Conta" icon="fa fa-plus" process="@this" update="dlg"
+                                         oncomplete="PF('dlgPagar').show();" actionListener="#{contasPagarControle.novo()}">
+                            <p:resetInput target="dlg" />
+                        </p:commandButton>
+                    </f:facet>
+
+                    <f:facet name="right">
+                        <p:commandButton icon="fa fa-gavel" title="Pagar Conta" value="Faturar"
+                                         process="@this" update="dlg" style="background-color: green"
+                                         oncomplete="PF('dlgPagar').show()"
+                                         disabled="#{contasPagarControle.contasPagar == null or contasPagarControle.contasPagar.contasPagarStatus=='RECEBIDO'}">
+                            <p:resetInput target="dlg" />
+
+                            <f:setPropertyActionListener value="#{contasPagarControle.contasPagar}" 
+                                                         target="#{contasPagarControle.contasPagarEdicao}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Editar" icon="fa fa-pencil" disabled="#{contasPagarControle.contasPagar == null or contasPagarControle.contasPagar.contasPagarStatus=='RECEBIDO'}"
+                                         style="background-color: #093669"/>
+
+                        <p:commandButton icon="ui-icon-trash" title="Excluir" style="background-color: red"
+                                         disabled="#{contasPagarControle.contasPagar == null or contasPagarControle.contasPagar.contasPagarStatus=='RECEBIDO'}" 
+                                         value="Excluir"/>
+                    </f:facet>
+                </p:toolbar>
+                <br/>
+
+                <p:dataTable id="tbl" var="pag" emptyMessage="Não há nenhuma Conta registrada." rows="20" paginatorPosition="bottom" style="margin-bottom:20px"
+                             paginator="true" selectionMode="single" value="#{contasPagarControle.listaTodasContas()}" 
+                             rowKey="#{pag.id}" selection="#{contasPagarControle.contasPagar}">
+
+                    <p:ajax event="rowSelect" update=":frm:toolbar"/>
+                    <p:ajax event="rowUnselect" update=":frm:toolbar"/>
+
+                    <p:column headerText="Fornecedor" filterBy="#{pag.pessoaJuridica.nome}" filterMatchMode="contains">
+                        <h:outputText value="#{pag.pessoaJuridica.nome}"/>
+                    </p:column>
+
+                    <p:column headerText="Lançamento" style="width: 10%; text-align: center">
+                        <h:outputText value="#{pag.data_lancamento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Vencimento" style="width: 10%; text-align: center">
+                        <h:outputText value="#{pag.data_vencimento}" style="color: red">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Pagamento"
+                              style="width: 14%; text-align: center">
+                        <h:outputText rendered="#{pag.data_pagamento!=null}" value="#{pag.data_pagamento}" style="color: green">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                        </h:outputText>
+                        <h:outputText rendered="#{pag.data_pagamento==null}" value="Pendente" style="color: red"/>
+                    </p:column>
+
+                    <p:column headerText="Valor" style="width: 10%; text-align: center">
+                        <h:outputText value="#{pag.valor}">
+                            <f:convertNumber type="currency" currencySymbol="R$"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Parcelas" style="width: 7%; text-align: center">
+                        <h:outputText value="#{pag.num_parcelas}"/>
+                    </p:column>
+
+                    <p:column headerText="Status" style="width: 9%; text-align: center">
+                        <h:outputText value="#{pag.contasPagarStatus.descricao}"/>
+                    </p:column>
+
+                    <p:column headerText="Observação" style="width: 9%; text-align: center">
+                        <h:outputText value="#{pag.contasPagar_obs}" />
+                    </p:column>
+                </p:dataTable>
+
+                <p:dialog id="dlg" modal="true" widgetVar="dlgPagar" header="Pagar Conta" width="600">
+                    <p:panelGrid id="pgPagar" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                        <h:panelGroup>
+                            <h:outputText value="Descrição:" style="color: #000000"/><br/>
+                            <h:outputText value="#{contasPagarControle.contasPagar.pessoaJuridica.nome}" style="color: green"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <h:outputText value="Data de Vencimento:" style="color: #000000"/><br/>
+                            <h:outputText value="#{contasPagarControle.contasPagar.data_vencimento}" style="color: red">
+                                <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <h:outputText value="Número da Parcela:" style="color: #000000"/><br/>
+                            <h:outputText value="#{contasPagarControle.contasPagar.num_parcelas}" />
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                    <br/>
+                    <p:panel header="Pagar Conta">
+                        <p:panelGrid id="pg2" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                            <h:panelGroup>
+                                <h:outputText value="Valor a Pagar:" style="color: #000000"/><br/>
+                                <p:inputText value="#{contasPagarControle.contasPagar.valor}" style="width: 80%">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$" maxFractionDigits="2"/>
+                                </p:inputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:panelGroup>
+                                    <h:outputText value="Tipo de Pagamento:" style="color: #000000"/><br/>
+                                    <p:selectOneMenu value="#{contasPagarControle.contasPagar.tipoPagamento}"
+                                                     style="width: 80%">
+                                        <f:selectItems value="#{contasPagarControle.tiposPagamento}" 
+                                                       var="p" itemLabel="#{p.descricao}" itemValue="#{p}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Observação:" style="color: #000000"/><br/>
+                                <p:inputTextarea value="#{contasPagarControle.contasPagar.contasPagar_obs}" />
+                            </h:panelGroup>
+                        </p:panelGrid>
+
+                        <br/>
+
+                        <p:commandButton value="Receber Conta" icon="fa fa-check" style="background-color: green" 
+                                         actionListener="#{contasPagarControle.alterarForm()}" ajax="false"
+                                         update=":frm:tbl:"/>
+
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true" id="mensagem"/>
+        <h:form id="frm">
+            <h:panelGrid columns="6">
+                <p:commandButton value="Novo" icon="fa fa-plus"
+                                 style="background-color: green" actionListener="#{usuarioControle.novo()}"
+                                 oncomplete="PF('dlgUsuario').show();"/>
+                ::::
+                <p:commandButton value="Gerar Relatório Cadastral" icon="fa fa-line-chart" onclick="this.form.target = 'BLANK'"
+                                 actionListener="#{relatorioControle.relatorioCadastralUsuario()}" ajax="false"/>
+            </h:panelGrid>
+
+            <br />
+
+            <p:dataTable emptyMessage="Não há nenhum Usuário Cadastrado" rows="10"
+                         paginator="true" paginatorPosition="bottom"
+                         value="#{usuarioControle.listaUsuario()}" var="usu">
+
+                <p:column headerText="Código" style="width: 7%">
+                    #{usu.id}
+                </p:column>
+
+                <p:column headerText="Nome de Usuário">
+                    <h:link value="#{usu.login}"/>
+                </p:column>
+
+                <p:column headerText="Nível de Acesso">
+                    #{usu.nivelAcesso}
+                </p:column>
+
+                <p:column headerText="Data de Cadastro">
+                    <h:outputText value="#{usu.dtCadastro}">
+                        <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Ativo" style="width: 7%">
+                    <h:outputLabel value="#{usu.status?'Sim':'Não'}" rendered="#{usu.status eq 'true'}" style="color: green"/>
+                    <h:outputLabel value="#{usu.status?'Sim':'Não'}" rendered="#{usu.status eq 'false'}" style="color: red"/>
+                </p:column>
+
+                <p:column headerText="Imagem">
+                    <p:graphicImage height="50" width="50" cache="false" url="http://localhost:8084/UpOdonto/images/145.jpg" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog draggable="true" modal="true" header="Cadastro de Usuário" hideEffect="slide" widgetVar="dlgUsuario">
+            <h:form id="dlgForm" enctype="multipart/form-data">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Data de Cadastro:" />
+                    <p:calendar value="#{usuarioControle.usuario.dtCadastro}" disabled="true" pattern="dd/MM/yyyy HH:mm:ss"/>
+
+                    <p:outputLabel value="Nome de Usuário:" />
+                    <p:inputText value="#{usuarioControle.usuario.nome}" />
+
+                    <p:outputLabel value="Nome de Login:" />
+                    <p:inputText value="#{usuarioControle.usuario.login}" />
+
+                    <p:outputLabel value="Senha de Usuário:" />
+                    <p:password value="#{usuarioControle.usuario.senha}" />
+
+                    <p:outputLabel value="Nível de Acesso:" />
+                    <p:selectOneMenu value="#{usuarioControle.usuario.nivelAcesso}">
+                        <f:selectItems value="#{usuarioControle.niveisAcesso}"
+                                       var="n" itemLabel="#{n.descricao}" itemValue="#{n}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Status:" />
+                    <p:selectBooleanCheckbox value="#{usuarioControle.usuario.status}" />
+
+                    <p:outputLabel value="Imagem:" for="foto"/>
+                    <p:fileUpload id="foto" cancelLabel="Cancelar" label="Escolher" mode="advanced"
+                                  fileUploadListener="#{usuarioControle.upload}" update=":mensagem"/>
+
+                    <!--                    <p:graphicImage id="img" value="{imagemControle.foto}" style="width: 100px; height: 140px">
+                                            <f:param name="caminho" value="{usuarioControle.usuario.caminho}"/>
+                                        </p:graphicImage>-->
+
+                    <p:commandButton actionListener="#{usuarioControle.salvar()}" ajax="false" action="listausuario" style="background-color: green"
+                                     icon="fa fa-check" value="Salvar"/>
+                    <p:commandButton value="Cancelar" icon="fa fa-close" style="background-color: red" action="listausuario"
+                                     ajax="false"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

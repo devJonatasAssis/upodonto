@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head">
+        <script type="text/javascript">
+            //<![CDATA[
+            function skinBar() {
+                this.cfg.shadow = false;
+                this.cfg.title = '';
+                this.cfg.seriesColors = ['3984b8', '7e8dcd'];
+                this.cfg.grid = {
+                    background: 'ffffff',
+                    borderColor: 'ffffff',
+                    gridLineColor: 'dee4e9',
+                    shadow: false
+                };
+                this.cfg.axesDefaults = {
+                    borderWidth: 0.1,
+                    borderColor: 'dce2e7',
+                    rendererOptions: {
+                        textColor: '757575'
+                    }
+                };
+                this.cfg.seriesDefaults = {
+                    shadow: false,
+                    lineWidth: 1,
+                    renderer: $.jqplot.BarRenderer,
+                    markerOptions: {
+                        shadow: false,
+                        size: 7,
+                        style: 'circle'
+                    }
+                }
+            }
+            //]]>
+        </script>
+        <style type="text/css">
+            .main-content {
+                padding: 0;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <b:form inline="true" id="formCompra">
+            <p:growl autoUpdate="true" />
+            <b:tabView>
+                <b:tab title="Dados Iniciais">
+                    <br/>
+                    <b:panel>
+                        <br/>
+                        
+                        <b:panelGrid columns="4">
+                             <h:panelGroup>
+                                <h:outputText value="Tipo Compra:" /><br/>
+                                <p:selectOneMenu value="#{compraControle.compra.compraTipo}">
+                                    <f:selectItems value="#{compraControle.compraTipos}" 
+                                                   var="cp" itemLabel="#{cp.descricao}" itemValue="#{cp}"/>
+                                </p:selectOneMenu> 
+                            </h:panelGroup>
+                            
+                            <h:panelGroup>
+                                <h:outputText value="Status:"/><br/>
+                                <p:selectOneMenu style="width: 110%" value="#{compraControle.compra.statusCompraVenda}">
+                                    <f:selectItems value="#{compraControle.statusCompraVendas}" var="st"
+                                                   itemLabel="#{st.descricao}" itemValue="#{st}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                        <br/>
+                        <b:panelGrid columns="3">
+                            <h:panelGroup>
+                                <h:outputText value="Data:"/><br/>
+                                <b:dateTimePicker id="data" disabled="true" style="width: 100%"
+                                                  value="#{compraControle.compra.compraData}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Fornecedor:"/><br/>
+                                <p:inputText readonly="#{facesContext.currentPhaseId.name eq 'RENDER_RESPONSE'}" id="pessoa" value="#{compraControle.nomePessoa}"
+                                             disabled="true" style="width: 80%"/>
+                                <p:spacer width="10px"/>
+                                <p:commandButton icon="fa fa-search" action="#{selecaoPessoaControle.abrirDialogo}"
+                                                 process="@this">
+                                    <p:ajax event="dialogReturn" listener="#{compraControle.pessoaSelecionado}" update="pessoa" />
+                                    <p:resetInput target="pessoa" />
+                                </p:commandButton>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Número da NFE:" /><br/>
+                                <p:inputText value="#{compraControle.compra.num_nfe}" style="width: 100%"/>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                    </b:panel>
+
+
+                    <b:panelGrid columns="2">
+                        <b:panel title="Itens de Produtos" collapsible="true" look="info">
+                            <b:panelGrid columns="1">
+                                <h:panelGroup>
+                                    <h:outputText value="Produto:" /><br/>
+                                    <p:autoComplete style="width: 1000%" value="#{compraControle.compra.compraItem.produto}"
+                                                    converter="#{compraControle.produtoConverter}"
+                                                    completeMethod="#{compraControle.listaFiltrando}"
+                                                    forceSelection="true" var="prod"
+                                                    size="50" placeholder="Digite um Produto..."
+                                                    itemLabel="#{prod.nome}"
+                                                    itemValue="#{prod}"
+                                                    emptyMessage="Nenhum Produto Encontrado"
+                                                    effect="blind" id="prod"
+                                                    title="campo produto" widgetVar="prodWid"
+                                                    onclick="PF('prodWid').search('')">
+
+                                        <f:facet name="itemtip">
+                                            <h:panelGrid columns="2" cellpadding="5">
+                                                <f:facet name="header">
+                                                    <h:outputText value="Preço" style="margin-left:70px"/>
+                                                </f:facet>
+                                                <h:outputText value="#{prod.preco}">
+                                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                                </h:outputText>
+                                            </h:panelGrid>
+                                        </f:facet>
+
+                                        <p:ajax event="itemSelect" update="btAddItem"
+                                                listener="#{compraControle.relacionaPreco()}"/>
+                                    </p:autoComplete>
+                                </h:panelGroup>
+                            </b:panelGrid>
+
+                            <hr/>
+
+                            <b:panelGrid columns="3" id="itens">
+                                <h:panelGroup>
+                                    <h:outputText value="Quantidade:" /><br/>
+                                    <p:inputText id="qtd" value="#{compraControle.compra.compraItem.icQuantidade}"
+                                                 style="width: 100%">
+                                        <p:ajax event="keyup" delay="1" update="preco descontoUnit"/>
+                                    </p:inputText>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="SubTotal:" /><br/>
+                                    <p:inputText id="preco" value="#{compraControle.compra.compraItem.subTotalLiquido}"
+                                                 readonly="true" style="width: 100%">
+                                        <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"
+                                                         locale="pt_BR"/>
+                                    </p:inputText>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="Desconto:" /><br/>
+                                    <p:inputText id="descontoUnit" value="#{compraControle.compra.compraItem.icDesconto}" style="width: 100%">
+                                        <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"
+                                                         locale="pt_BR"/>
+                                        <p:ajax event="keyup" delay="1" update="preco"/>
+                                    </p:inputText>
+                                </h:panelGroup>
+
+                                <h:panelGroup>
+                                    <h:outputText value="-----" style="color: white" /><br/>
+                                    <b:commandButton id="btAddItem" value="Adicionar" icon-awesome="plus" look="success"
+                                                     disabled="#{empty compraControle.compra.compraItem.produto}" ajax="false"
+                                                     actionListener="#{compraControle.addItem()}" update="prod pgTotais pgItens itens"/>
+                                </h:panelGroup>
+                            </b:panelGrid>
+                        </b:panel>
+
+                        <b:panel id="pgTotais">
+                            <b:panelGrid columns="2">
+
+                                <p:outputLabel value="Total Bruto" style="color: green"/>
+                                <h:outputText value="#{compraControle.compra.compraTotalBruto}">
+                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                </h:outputText>
+
+                                <p:outputLabel value="Total de Desconto" style="color: red"/>
+                                <h:outputText value="#{compraControle.compra.compraDesconto}">
+                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                </h:outputText>
+
+                                <p:outputLabel id="total" value="Total Líquido" style="color: blue"/>
+                                <h:outputText value="#{compraControle.compra.compraTotalLiquido}">
+                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                </h:outputText>
+
+                            </b:panelGrid>
+                        </b:panel>
+                    </b:panelGrid>
+
+
+                    <b:panel>
+                        <f:facet name="header">
+                            <h:outputText value="Itens da Compra" style="font-size: large"/>
+                        </f:facet>
+                        <h:panelGroup id="pgItens">
+                            <p:dataTable value="#{compraControle.compra.compraItems}" 
+                                         var="item" emptyMessage="Nenhum produto Adicionado !">
+
+                                <p:column headerText="Produto" style="text-align: center">
+                                    <h:outputText value="#{item.produto.nome}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Quantidade" style="text-align: center">
+                                    <h:outputText value="#{item.icQuantidade}">
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="(+) Valor Unit." style="text-align: center">
+                                    <h:outputText value="#{item.icPrecoBruto}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="(+) Subtotal Bruto" style="text-align: center">
+                                    <h:outputText value="#{item.subTotalBruto}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="(-) Desconto" style="text-align: center">
+                                    <h:outputText value="#{item.icDesconto}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="(+) Subtotal Líquido" style="text-align: center">
+                                    <h:outputText value="#{item.subTotalLiquido}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column  style="text-align: center">
+                                    <b:commandButton id="btExcluirItem" value="Excluir" actionListener="#{compraControle.removeItem(item)}" look="danger"
+                                                     iconAwesome="trash" title="Excluir" update="formCompra:pgTotais formCompra:pgItens"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGroup> 
+                    </b:panel>
+                </b:tab>
+
+                <b:tab title="Pagamento">
+                    <b:panel>
+                        <h3 style="font-size: 130%; color: #000">Pagamento</h3>
+                        <b:panelGrid columns="3">
+                            <h:panelGroup>
+                                <h:outputText value="Forma de Pagamento: " /><br/>
+                                <p:selectOneMenu value="#{compraControle.formaPagamento}" style="width: 100%">
+                                    <f:selectItem itemLabel=" À Vista" itemValue="V"/>
+                                    <f:selectItem itemLabel=" À Prazo" itemValue="P"/>
+                                    <f:ajax event="itemSelect" render="pgPag" listener="#{compraControle.atualizaParcela()}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup> 
+
+                            <h:panelGroup>
+                                <h:outputText value="Desconto:" style="color: red"/><br/>
+                                <p:inputText value="#{compraControle.compra.compraDesconto}"
+                                             style="width: 60%">
+                                    <p:ajax event="blur" update="total" listener="#{compraControle.compra.calculaTotal()}"/>
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </p:inputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Acréscimos:" style="color: blue"/><br/>
+                                <p:inputText style="width: 60%"
+                                             value="#{compraControle.compra.compraAcrescimo}">
+                                    <p:ajax event="blur" update="total" listener="#{compraControle.compra.calculaTotal()}" />
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </p:inputText>
+                            </h:panelGroup>
+                        </b:panelGrid>
+
+                        <br />
+
+                        <b:panelGrid columns="4" id="pgPag">
+                            <h:panelGroup>
+                                <h:outputText value="Tipo de Pagamento:" /><br/>
+                                <p:selectOneMenu value="#{compraControle.compra.tipoPagamento}" style="width: 100%">
+                                    <f:selectItems value="#{compraControle.tiposPagamento}" 
+                                                   var="tp" itemLabel="#{tp.descricao}" itemValue="#{tp}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+
+
+                            <h:panelGroup>
+                                <h:outputText value="Data de Vencimento:" /><br/>
+                                <b:dateTimePicker value="#{compraControle.dataVencimento}" locale="pt_BR"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Número de Parcelas:" rendered="#{compraControle.formaPagamento=='P'}"/><br/>
+                                <p:inputText value="#{compraControle.numParcela}" 
+                                             rendered="#{compraControle.formaPagamento=='P'}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Quantidade:" style="color: white"/><br/>
+                                <b:commandButton value="Gerar" iconAwesome="check" look="success"
+                                                 actionListener="#{compraControle.gerarParcelas()}"/>
+                            </h:panelGroup>
+                        </b:panelGrid>
+
+                        <br/>
+
+                        <b:dataTable searching="false" paginated="false" customLangUrl = " //cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json "
+                                     var="parc" value="#{compraControle.compra.contasPagar}">
+
+                            <b:dataTableColumn value="#{parc.num_parcelas}" label="Parcelas"/>
+
+                            <b:dataTableColumn label="Valor">
+                                <h:outputText value="#{parc.valor}" style="color: red">
+                                    <f:convertNumber type="currency" locale="pt_BR" 
+                                                     currencySymbol="R$" maxFractionDigits="2"/>
+                                </h:outputText>
+                            </b:dataTableColumn>
+
+                            <b:dataTableColumn label="Data de Vencimento">
+                                <h:outputText value="#{parc.data_vencimento}" style="color: green">
+                                    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </b:dataTableColumn>
+                        </b:dataTable>
+                    </b:panel>
+                </b:tab>
+
+                <b:tab title="Conclusão">
+                    <br/>
+                    <b:panel>
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Ativo:" /><br/>
+                                <p:selectBooleanCheckbox value="#{compraControle.compra.compraStatus}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Observações:" /><br/>
+                                <p:inputTextarea value="#{compraControle.compra.compraObs}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Valor Total:" /><br/>
+                                <h:outputText value="#{compraControle.compra.compraTotalLiquido}"
+                                              style="color: green; font-size: 20px">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$ "/>
+                                </h:outputText>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                    </b:panel>
+
+                    <b:panel>
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Data do Registro:" /><br/>
+                                <h:outputText value="#{compraControle.compra.compraData}" style="color: green">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="date" locale="pt_BR" />
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Nome do Cliente" /><br/>
+                                <h:outputText value="#{compraControle.compra.pessoa.nome}" style="color: green"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Forma de Pagamento:" /><br/>
+                                <h:outputText value="#{compraControle.compra.tipoPagamento.descricao}" style="color: green"/>
+                            </h:panelGroup>
+                        </b:panelGrid>
+
+                        <hr/>
+
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Data de Vencimento da Parcela 1:" /><br/>
+                                <h:outputText value="#{compraControle.dataVencimento}" style="color: green">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Número de Parcelas:" /><br/>
+                                <h:outputText value="#{compraControle.numParcela}" style="color: green" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Desconto:"/><br/>
+                                <h:outputText value="#{compraControle.compra.compraDesconto}" style="color: green">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"
+                                                     locale="pt_BR"/>
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Acréscimo:"/><br/>
+                                <h:outputText value="#{compraControle.compra.compraAcrescimo}" style="color: green">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"
+                                                     locale="pt_BR"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                    </b:panel>
+
+                    <br/>
+
+                    <b:panel>
+                        <h:panelGrid columns="2">
+                            <b:commandButton value="Salvar" iconAwesome="check" look="success" actionListener="#{compraControle.salvar()}"
+                                             ajax="false" action="listacompra"/>
+
+                            <b:commandButton value="Cancelar" iconAwesome="close" look="danger" ajax="false" action="listacompra"/>
+                        </h:panelGrid>
+                    </b:panel>
+                </b:tab>
+            </b:tabView>
+        </b:form>
+    </ui:define>
+</ui:composition>

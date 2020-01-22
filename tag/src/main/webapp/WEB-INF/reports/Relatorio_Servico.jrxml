@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Relatorio_Servico" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a5ef003e-a46c-4d05-95f3-27268d64fedb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="53"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/jonatas/Documentos/UpgradeSistemas/upodonto/UpOdonto/UpOdonto/tag/src/main/webapp/WEB-INF/reports/"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     servico."id" AS servico_id,
+     servico."serv_dtcadastro" AS servico_serv_dtcadastro,
+     servico."serv_nome" AS servico_serv_nome,
+     servico."serv_status" AS servico_serv_status,
+     servico."serv_valor" AS servico_serv_valor
+FROM
+     "public"."servico" servico]]>
+	</queryString>
+	<field name="servico_id" class="java.lang.Long"/>
+	<field name="servico_serv_dtcadastro" class="java.sql.Timestamp"/>
+	<field name="servico_serv_nome" class="java.lang.String"/>
+	<field name="servico_serv_status" class="java.lang.Boolean"/>
+	<field name="servico_serv_valor" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="100" uuid="4be237e9-04a0-4c63-8d3d-b0536ffdceca"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subReport_Cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="35" uuid="876d5099-4890-4b90-aaf3-910735ea7000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Relatório de Serviço]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="17" width="171" height="20" uuid="09cb1c66-0821-4fb9-bf20-e48cc74103a0"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Serviço]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="17" width="100" height="20" uuid="24716095-71db-4c36-97f3-5ad8e11a6823"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor do Serviço]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="17" width="134" height="20" uuid="2d71a968-8025-4b46-85dc-2fe7610ba305"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="17" width="115" height="20" uuid="3b1d454e-1ff7-40d1-87cf-edb339314d3c"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data de Cadastro]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="171" height="20" uuid="74767152-cb73-462b-971c-deb859298eb8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{servico_serv_nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="171" y="0" width="100" height="20" uuid="3f984c7d-3e3a-43b3-9767-12abd02bc442"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{servico_serv_valor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="271" y="0" width="134" height="20" uuid="2d023154-206b-4dd3-a746-48528863ccfb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{servico_serv_status}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="405" y="0" width="115" height="20" uuid="564a2fdb-1e4a-4e21-b701-501fe0e36864"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{servico_serv_dtcadastro}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="34" width="143" height="20" uuid="eb7c9519-7922-4c9c-a3cc-c6ecf4354635"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="34" width="80" height="20" uuid="c9f15d48-ab00-4615-ae9c-e4351db6d764"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="520" y="34" width="40" height="20" uuid="53ea26ec-47d3-4440-98ab-5ad3e989a135"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

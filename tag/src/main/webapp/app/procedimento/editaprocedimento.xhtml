@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:b="http://bootsfaces.net/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="head">
+
+
+        <script type="text/javascript">
+            //<![CDATA[
+            function skinBar() {
+                this.cfg.shadow = false;
+                this.cfg.title = '';
+                this.cfg.seriesColors = ['3984b8', '7e8dcd'];
+                this.cfg.grid = {
+                    background: 'ffffff',
+                    borderColor: 'ffffff',
+                    gridLineColor: 'dee4e9',
+                    shadow: false
+                };
+                this.cfg.axesDefaults = {
+                    borderWidth: 0.1,
+                    borderColor: 'dce2e7',
+                    rendererOptions: {
+                        textColor: '757575'
+                    }
+                };
+                this.cfg.seriesDefaults = {
+                    shadow: false,
+                    lineWidth: 1,
+                    renderer: $.jqplot.BarRenderer,
+                    markerOptions: {
+                        shadow: false,
+                        size: 7,
+                        style: 'circle'
+                    }
+                }
+            }
+            //]]>
+        </script>
+        <style type="text/css">
+            .main-content {
+                padding: 0;
+            }
+
+            .img{
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                width: 45px;
+                padding: 0 6px;
+                float: left;
+            }
+            .img:hover{
+                border: 1px solid #0e71dc;
+                opacity: 0.2;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true" id="msgs"/>
+        <b:form inline="true" id="frmComeco">
+            <b:tabView>
+                <b:tab title="Dados Iniciais">
+                    <b:panel>
+                        <br/>
+
+                        <h:panelGrid columns="4">
+                            <h:outputText value="Odontograma:"/>
+                            <p:spacer style="width: 10px" />
+                            <p:selectBooleanCheckbox value="#{procedimentoControle.odontograma}">
+                                <p:ajax event="change" update="nomeTrat" />
+                            </p:selectBooleanCheckbox>
+                        </h:panelGrid>
+
+                        <hr/>
+
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Data:"/><br/>
+                                <b:dateTimePicker id="data" disabled="true" style="width: 100%"
+                                                  value="#{procedimentoControle.procedimento.data}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Paciente:"/><br/>
+                                <p:inputText readonly="#{facesContext.currentPhaseId.name eq 'RENDER_RESPONSE'}" id="paciente" value="#{procedimentoControle.nomePaciente}"
+                                             disabled="true"/>
+                                <p:spacer width="5px"/>
+                                <p:commandButton icon="fa fa-search" action="#{selecaoPessoaControle.abrirDialogo}"
+                                                 process="@this" update="@none" title="Buscar Paciente">
+                                    <p:ajax event="dialogReturn" listener="#{procedimentoControle.pessoaSelecionado}" process="@this" update="paciente" />
+                                    <p:resetInput target="paciente" />
+                                </p:commandButton>
+                            </h:panelGroup> 
+
+                            <h:panelGroup>
+                                <h:outputText value="Nome do Tratamento:"/><br/>
+                                <p:autoComplete id="nomeTrat" value="#{procedimentoControle.procedimento.tratamento}"
+                                                converter="#{procedimentoControle.tratamentoConverter}"
+                                                completeMethod="#{procedimentoControle.tratamentos}"
+                                                var="trats" itemLabel="#{trats.nome}"
+                                                itemValue="#{trats}" forceSelection="true"
+                                                disabled="#{procedimentoControle.odontograma==true}"
+                                                placeholder="Digite um Tratamento...">
+                                    <p:ajax update="total" event="itemSelect" listener="#{procedimentoControle.procedimento.calculaTotal()}"/>
+                                </p:autoComplete> 
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Nome do Doutor(a):" />
+                                <p:selectOneMenu filter="true" filterMatchMode="startsWith" value="#{procedimentoControle.procedimento.doutor}"
+                                                 converter="#{procedimentoControle.doutorConverter}"
+                                                 style="width: 100%">
+                                    <f:selectItems value="#{procedimentoControle.listaDoutors()}" var="dot"
+                                                   itemLabel="#{dot.nome}" itemValue="#{dot}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                        <hr/>
+
+                        <h:panelGrid columns="31">
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P18.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="18" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P17.PNG" onclick="PF('dlgteste').show();"/><br/>
+                                <p:commandButton value="17" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P16.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="16" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P15.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="15" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P14.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="14" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P13.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="13" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P12.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="12" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P11.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="11" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P21.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="21" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P22.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="22" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P23.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="23" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P24.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="24" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P25.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="25" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P26.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="26" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P27.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="27" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P28.PNG" onclick="PF('dlgteste').show();" /><br/>
+                                <p:commandButton value="28" oncomplete="PF('dlgDente').show();" style="width: 44px"/>
+                            </h:panelGroup>
+
+
+                        </h:panelGrid>
+
+                        <h:panelGroup id="pgTotais">
+                            <h:panelGroup style="position: absolute; left: 83%">
+                                <h:outputText value="Sub-Total Líquido:"/><br/>
+                                <h:outputLabel value="#{procedimentoControle.procedimento.procedimentoTotalLiquido}"
+                                               style="color: green; font-size: 20px" id="total">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </h:outputLabel>
+                            </h:panelGroup>
+
+                            <h:panelGroup style="position: absolute; left: 83%; top: 420px">
+                                <h:outputText value="Sub-Total Bruto:"/><br/>
+                                <h:outputLabel value="#{procedimentoControle.procedimento.procedimentoTotalLiquido}"
+                                               style="color: blue; font-size: 20px" id="totalBruto">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </h:outputLabel>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <br />
+
+                        <h:panelGrid columns="31">
+
+                            <h:panelGroup>
+                                <p:commandButton value="48" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P48.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="47" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P47.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="46" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P46.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="45" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P45.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="44" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P44.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="43" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P43.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="42" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P42.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="41" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P41.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="31" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P31.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="32" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P32.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="33" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P33.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="34" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P34.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="35" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P35.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="36" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/> 
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P36.PNG" onclick="PF('dlgteste').show();"/>        
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="37" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P37.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:spacer style="width: 3px" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:commandButton value="38" oncomplete="PF('dlgDente').show();" style="width: 44px"/><br/>
+                                <p:graphicImage class="img" library="manhattan-layout" name="images/odontograma/P38.PNG" onclick="PF('dlgteste').show();"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+                        <hr/>
+
+                        <h:panelGroup id="pgItens">
+                            <b:dataTable var="proce" searching="false" paginated="false" value="#{procedimentoControle.procedimento.itemProcedimentos}"
+                                         customLangUrl = " //cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json ">
+                                <b:dataTableColumn label="Procedimento" value="#{proce.servico.nome}"/>
+                                <b:dataTableColumn label="Dentes" value="#{proce.de.descricao}  Até  #{proce.ate.descricao}"/>
+                                <b:dataTableColumn label="Quantidade" value="#{proce.quantidade}"/>
+                                <b:dataTableColumn label="Sub-Total Líquido" value="#{proce.ipPrecoLiquido}"/>
+                            </b:dataTable>
+                        </h:panelGroup>
+                    </b:panel>
+                </b:tab>
+
+                <b:tab title="Forma de Pagamento">
+                    <b:panel>
+                        <h3 style="font-size: 130%; color: #000">Pagamento</h3>
+                        <b:panelGrid columns="3">
+                            <h:panelGroup>
+                                <h:outputText value="Forma de Pagamento: " /><br/>
+                                <p:selectOneMenu value="#{procedimentoControle.formaPagamento}" style="width: 100%">
+                                    <f:selectItem itemLabel=" À Vista" itemValue="V"/>
+                                    <f:selectItem itemLabel=" À Prazo" itemValue="P"/>
+                                    <f:ajax event="itemSelect" render="pgPag" listener="#{procedimentoControle.atualizaParcelas()}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup> 
+
+                            <h:panelGroup>
+                                <h:outputText value="Desconto:" style="color: red"/><br/>
+                                <p:inputText value="#{procedimentoControle.procedimento.desconto}"
+                                             style="width: 60%">
+                                    <p:ajax event="blur" update="total" listener="#{procedimentoControle.procedimento.calculaTotal()}"/>
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </p:inputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Acréscimos:" style="color: blue"/><br/>
+                                <p:inputText style="width: 60%"
+                                             value="#{procedimentoControle.procedimento.acrescimos}">
+                                    <p:ajax event="blur" update="total" listener="#{procedimentoControle.procedimento.calculaTotal()}" />
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </p:inputText>
+                            </h:panelGroup>
+                        </b:panelGrid>
+
+                        <br />
+
+                        <b:panelGrid columns="4" id="pgPag">
+                            <h:panelGroup>
+                                <h:outputText value="Tipo de Pagamento:" /><br/>
+                                <p:selectOneMenu value="#{procedimentoControle.procedimento.tipoPagamento}" style="width: 100%">
+                                    <f:selectItems value="#{procedimentoControle.tipoPagamentos()}" 
+                                                   var="tp" itemLabel="#{tp.descricao}" itemValue="#{tp}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+
+
+                            <h:panelGroup>
+                                <h:outputText value="Data de Vencimento:" /><br/>
+                                <b:dateTimePicker value="#{procedimentoControle.dataVencimento}" locale="pt_BR"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Número de Parcelas:" rendered="#{procedimentoControle.formaPagamento=='P'}"/><br/>
+                                <p:inputText value="#{procedimentoControle.procedimento.num_parcela}" 
+                                             rendered="#{procedimentoControle.formaPagamento=='P'}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Quantidade:" style="color: white"/><br/>
+                                <b:commandButton value="Gerar" iconAwesome="check" look="success"
+                                                 actionListener="#{procedimentoControle.gerarParcelas()}"/>
+                            </h:panelGroup>
+                        </b:panelGrid>
+
+                        <br/>
+
+                        <b:dataTable searching="false" paginated="false" customLangUrl = " //cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json "
+                                     var="parc" value="#{procedimentoControle.procedimento.contasReceber}">
+
+                            <b:dataTableColumn value="#{parc.crNumParcela}" label="Parcelas"/>
+
+                            <b:dataTableColumn label="Valor">
+                                <h:outputText value="#{parc.crValor}" style="color: red">
+                                    <f:convertNumber type="currency" locale="pt_BR" 
+                                                     currencySymbol="R$" maxFractionDigits="2"/>
+                                </h:outputText>
+                            </b:dataTableColumn>
+
+                            <b:dataTableColumn label="Data de Vencimento">
+                                <h:outputText value="#{parc.crDataVencimento}" style="color: green">
+                                    <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </b:dataTableColumn>
+                        </b:dataTable>
+                    </b:panel>
+                </b:tab>
+
+                <b:tab title="Conclusão">
+                    <br/>
+                    <b:panel>
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Ativo:" /><br/>
+                                <p:selectBooleanCheckbox value="#{procedimentoControle.procedimento.status}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Observações:" /><br/>
+                                <p:inputTextarea value="#{procedimentoControle.procedimento.obs}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Valor Total:" /><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.procedimentoTotalLiquido}"
+                                              style="color: green; font-size: 20px">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$ "/>
+                                </h:outputText>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                    </b:panel>
+
+                    <b:panel>
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Data do Registro:" /><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.data}" style="color: green">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" type="date" locale="pt_BR" />
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Nome do Paciente:" /><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.pessoaFisica.nome}" style="color: green"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Nome do Tratamento:" /><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.tratamento.nome}" style="color: green"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Forma de Pagamento:" /><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.tipoPagamento.descricao}" style="color: green"/>
+                            </h:panelGroup>
+                        </b:panelGrid>
+
+                        <hr/>
+
+                        <b:panelGrid columns="4">
+                            <h:panelGroup>
+                                <h:outputText value="Data de Vencimento da Parcela 1:" /><br/>
+                                <h:outputText value="#{procedimentoControle.dataVencimento}" style="color: green">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Número de Parcelas:" /><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.num_parcela}" style="color: green" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Desconto:"/><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.desconto}" style="color: green">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"
+                                                     locale="pt_BR"/>
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Acréscimo:"/><br/>
+                                <h:outputText value="#{procedimentoControle.procedimento.acrescimos}" style="color: green">
+                                    <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"
+                                                     locale="pt_BR"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                        </b:panelGrid>
+                    </b:panel>
+
+                    <br/>
+
+                    <b:panel>
+                        <h:panelGrid columns="2">
+                            <b:commandButton value="Salvar" iconAwesome="check" look="success" actionListener="#{procedimentoControle.salvar()}"
+                                             ajax="false" action="listaprocedimento"/>
+
+                            <b:commandButton value="Cancelar" iconAwesome="close" look="danger" ajax="false" action="listaprocedimento"/>
+                        </h:panelGrid>
+                    </b:panel>
+                </b:tab>
+            </b:tabView>
+
+            <p:dialog id="dlgTeste" widgetVar="dlgteste" showEffect="fade" hideEffect="fade" header="Novo Procedimento" dynamic="true" modal="true">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Situação:" />
+                    <p:selectOneMenu value="#{procedimentoControle.procedimento.itemProcedimento.status_Odontograma}">
+                        <f:selectItems value="#{procedimentoControle.status_Odontograma()}" var="stat"
+                                       itemLabel="#{stat.descricao}" itemValue="#{stat}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Tipo:" />
+                    <p:selectOneMenu value="#{procedimentoControle.procedimento.itemProcedimento.tipoProcedimento}">
+                        <f:selectItems value="#{procedimentoControle.tipo_Procedimentos()}" var="p" 
+                                       itemLabel="#{p.descricao}" itemValue="#{p}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Procedimentos:" />
+                    <p:autoComplete value="#{procedimentoControle.procedimento.itemProcedimento.servico}"
+                                    converter="#{procedimentoControle.servicoConverter}"
+                                    completeMethod="#{procedimentoControle.listaFiltrando}"
+                                    forceSelection="true" var="servico"
+                                    size="50" placeholder="Digite um Serviço..."
+                                    itemLabel="#{servico.nome}"
+                                    itemValue="#{servico}"
+                                    emptyMessage="Nenhum Serviço Encontrado"
+                                    effect="blind" id="serv"
+                                    title="Campo Serviço" widgetVar="servWid"
+                                    onclick="PF('servWid').search('')">
+
+                        <f:facet name="itemtip">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <f:facet name="header">
+                                    <h:outputText value="Preço" style="margin-left:100px"/>
+                                </f:facet>
+                                <h:outputText value="#{servico.valor}">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$"/>
+                                </h:outputText>
+                            </h:panelGrid>
+                        </f:facet>
+
+                        <p:ajax event="itemSelect" update="btAddItem"
+                                listener="#{procedimentoControle.relacionaPreco()}"/>
+                    </p:autoComplete>
+                </h:panelGrid>
+                <br/>
+
+                <h:panelGrid columns="6">
+                    <h:outputText value="Valor:" />
+                    <h:outputText value="Embranc::" style="color: white"/>
+                    <p:inputText value="#{procedimentoControle.procedimento.itemProcedimento.subTotalLiquido}"
+                                 readonly="true" id="preco" style="width: 70%">
+                        <f:convertNumber type="currency" currencySymbol="R$ "/>
+                    </p:inputText>
+
+                    <h:outputText value="Quantidade" />
+                    <h:outputText value=":::" style="color: white"/>
+                    <p:inputText value="#{procedimentoControle.procedimento.itemProcedimento.quantidade}" 
+                                 style="width: 70%">
+                        <p:ajax event="keyup" delay="1" update="preco"/>
+                    </p:inputText>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="10">
+                    <h:outputText value="De"/>
+                    <h:outputText value="Em Branco::::" style="color: white"/>
+                    <p:selectOneMenu style="width: 125%" value="#{procedimentoControle.procedimento.itemProcedimento.de}">
+                        <f:selectItems value="#{procedimentoControle.dentes()}" var="dente"
+                                       itemLabel="#{dente.descricao}" itemValue="#{dente}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="EemBranco" style="color: white"/>
+                    <h:outputText value="E:," style="color: white"/>
+                    <h:outputText value="Até"/>
+                    <h:outputText value="EmBranco" style="color: white"/>
+                    <p:selectOneMenu value="#{procedimentoControle.procedimento.itemProcedimento.ate}">
+                        <f:selectItems value="#{procedimentoControle.dentes()}" var="ate"
+                                       itemLabel="#{ate.descricao}" itemValue="#{ate}"/>
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="3" id="pg">
+                    <h:outputText value="Observação" />
+                    <h:outputText value="Ob" style="color: white"/>
+                    <p:inputTextarea value="#{procedimentoControle.procedimento.itemProcedimento.obs}"/>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Confirmar" icon="fa fa-check" style="background-color: green" id="btAddItem"
+                                     actionListener="#{procedimentoControle.addItemProcedimento()}"
+                                     update="pgItens pgTotais" ajax="false"/>
+
+                    <p:commandButton value="Cancelar" icon="fa fa-close" style="background-color: red" 
+                                     update="total totalBruto" oncomplete="PF('dlgteste').hide();"
+                                     action="editaprocedimento"/>
+
+                </h:panelGrid>
+            </p:dialog>
+
+            <p:dialog widgetVar="dlgDente" header="Ações do Dente" dynamic="true" modal="true" height="300">
+                <h:panelGrid columns="3">
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Ausência de Dente" itemValue="A" /> 
+                    </p:selectManyCheckbox>
+
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Permanente" itemValue="B" />
+                    </p:selectManyCheckbox>
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Decíduo" itemValue="C" />
+                    </p:selectManyCheckbox>
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Incluso" itemValue="D" />
+                    </p:selectManyCheckbox>
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Microdente" itemValue="E" />
+                    </p:selectManyCheckbox>
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Supranumenário" itemValue="F" />
+                    </p:selectManyCheckbox>
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Semi Incluso" itemValue="G" />
+                    </p:selectManyCheckbox>
+                    <p:selectManyCheckbox>
+                        <f:selectItem itemLabel="Ausência de Coroa" itemValue="H" />
+                    </p:selectManyCheckbox>
+                </h:panelGrid>
+
+                <br/>
+
+                <h:panelGrid columns="1">
+                    <p:outputLabel value="Anotações:" />
+                    <p:inputTextarea />
+                </h:panelGrid>
+
+                <br/>
+
+                <h:panelGrid columns="10">
+                    <p:commandButton value="Salvar" icon="fa fa-check" ajax="false" style="background-color: green;"/>
+                </h:panelGrid>
+            </p:dialog>
+        </b:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true" />
+        <h:form>
+            <h:panelGrid columns="2">
+                <p:commandButton value="Nova Empresa" icon="fa fa-plus"
+                                 onclick="PF('dlgEmpresa').show();" action="#{empresaControle.novo()}"
+                                 immediate="true" style="background-color: green"/>
+
+                <p:commandButton value="Setores da Empresa" icon="fa fa-plus" action="#{setorControle.novo()}"
+                                 style="background-color: green" onclick="PF('dlgSetor').show();"
+                                 immediate="true"/>
+            </h:panelGrid>
+            <br />
+
+            <p:dataTable emptyMessage="Não há Empresas cadastradas" rows="5" paginator="true"
+                         paginatorPosition="bottom" value="#{empresaControle.listar}"
+                         var="emp">
+
+                <p:column headerText="Código" style="text-align: center">
+                    #{emp.id}
+                </p:column>
+                <p:column headerText="Nome" style="text-align: center">
+                    #{emp.nome}
+                </p:column>
+                <p:column headerText="CNPJ" style="text-align: center">
+                    #{emp.cnpj}
+                </p:column>
+                <p:column headerText="Telefone" style="text-align: center">
+                    #{emp.telefone}
+                </p:column>
+                <p:column headerText="Tipo da Empresa" style="text-align: center">
+                    #{emp.tipoEmpresa.descricao}
+                </p:column>
+                <p:column headerText="Cidade">
+                    #{emp.cidade.nome} - #{emp.estado.sigla}
+                </p:column>
+                <p:column>
+                    <p:commandButton value="Excluir" icon="fa fa-trash" action="#{empresaControle.excluir(emp)}" ajax="false" immediate="true"
+                                     style="background-color: red"/>
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog widgetVar="dlgEmpresa" header="Cadastro da Empresa" modal="true" showEffect="slide" hideEffect="slide">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Data de Cadastro:" />
+                    <p:calendar disabled="true" value="#{empresaControle.empresa.data_Cadastro}"/>
+
+                    <p:outputLabel value="Nome Fantasia:" />
+                    <p:inputText value="#{empresaControle.empresa.nome}"/>
+
+                    <p:outputLabel value="CNPJ:" />
+                    <p:inputMask mask="99.999.999/9999-99" 
+                                 value="#{empresaControle.empresa.cnpj}"
+                                 required="true" requiredMessage="Preencha o CNPJ"/>
+
+                    <p:outputLabel value="IE:" />
+                    <p:inputText value="#{empresaControle.empresa.ie}"/>
+
+                    <p:outputLabel value="Razão Social:" />
+                    <p:inputText value="#{empresaControle.empresa.razaoSocial}"/>
+                    
+                    <p:outputLabel value="Cidade:" />
+                    <p:autoComplete value="#{empresaControle.empresa.cidade}"
+                                    converter="#{pessoaJuridicaControle.cidadeConverter}"
+                                    completeMethod="#{pessoaJuridicaControle.listaFiltrando}"
+                                    var="c" itemLabel="#{c.nome}" itemValue="#{c}"
+                                    forceSelection="true"/>
+                    
+                    <p:outputLabel value="Estado:" />
+                    <p:selectOneMenu value="#{empresaControle.empresa.estado}"
+                                     converter="#{pessoaJuridicaControle.estadoConverter}">
+                        <f:selectItems value="#{pessoaJuridicaControle.listaEstados()}"
+                                       var="e" itemLabel="#{e.nome}" itemValue="#{e}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Telefone:" />
+                    <p:inputMask mask="(99)9999-9999" value="#{empresaControle.empresa.telefone}"/>
+
+                    <p:outputLabel value="Celular:" />
+                    <p:inputMask mask="(99)99999-9999" value="#{empresaControle.empresa.celular}"/>
+
+                    <p:outputLabel value="Email:" />
+                    <p:inputText value="#{empresaControle.empresa.email}"/>
+
+                    <p:outputLabel value="Tipo Empresa:" />
+                    <p:selectOneMenu value="#{empresaControle.empresa.tipoEmpresa}">
+                        <f:selectItems value="#{empresaControle.tipoEmpresas()}"
+                                       var="emp" itemLabel="#{emp.descricao}"
+                                       itemValue="#{emp}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" style="background-color: green" 
+                                     ajax="false" action="lista"
+                                     actionListener="#{empresaControle.salvar()}"/>
+
+                    <p:commandButton value="Cancelar" icon="fa fa-close" style="background-color: red" 
+                                     onclick="PF('dlgEmpresa').hide();"/>
+                </h:panelGrid>
+            </p:dialog>
+
+            <p:dialog modal="true" widgetVar="dlgSetor" header="Cadastro de Setor" width="500">
+                <h:panelGrid columns="3">
+                    <h:panelGroup>
+                        <p:outputLabel value="Data de Cadastro:" /><br/>
+                        <p:calendar value="#{setorControle.setor.data_cadastro}" disabled="true" pattern="dd/MM/yyyy"/>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup>
+                        <p:outputLabel value="Nome do Setor:" /><br/>
+                        <p:inputText value="#{setorControle.setor.descricao}" />
+                    </h:panelGroup>
+                    
+                    <h:panelGroup>
+                        <p:outputLabel value="em branco" style="color: white" />
+                        <p:commandButton value="Salvar" actionListener="#{setorControle.salvar()}" ajax="false" 
+                                         action="lista" style="background-color: green" icon="fa fa-check"
+                                         immediate="true"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+                
+                <br/>
+                
+                <p:dataTable value="#{setorControle.listar}" var="s" emptyMessage="Não há nenhum Setor Cadastrado"
+                             rows="10" paginator="true" paginatorPosition="bottom">
+                    <p:column headerText="Data Cadastro" style="text-align: center">
+                        <h:outputText value="#{s.data_cadastro}">
+                            <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    
+                    <p:column headerText="Descrição" style="text-align: center">
+                        #{s.descricao}
+                    </p:column>
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui">
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl autoUpdate="true" />
+
+            <h:panelGrid columns="2">
+                <p:inputText placeholder="Pesquise um Paciente..." id="campoFiltro" title="Pressione Enter para Filtrar"
+                             value="#{pacienteControle.filtro}">
+                    <f:ajax event="change" render="pacientes" listener="#{pacienteControle.pesquisarPaciente()}"/>
+                </p:inputText>
+                <p:commandButton value="Filtrar" icon="fa fa-search" ajax="false" style="background-color: green"/>
+            </h:panelGrid>
+
+            <br/>
+
+            <p:dataGrid var="p" value="#{pacienteControle.listaPacientes()}" columns="4" layout="grid"
+                        rows="10" paginator="true" id="pacientes" rowsPerPageTemplate="6,12,16" 
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} 
+                        {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" emptyMessage="Não há nenhum Paciente em Tratamento">
+
+                <f:facet name="header">
+                    Lista de Pacientes em Tratamento
+                </f:facet>
+
+                <p:panel header="#{p.pessoaFisica.status?'Ativo':'Inativo'}" style="text-align:center; color: green">
+                    <h:panelGrid columns="1" style="width: 100%">
+                        <p:graphicImage rendered="#{p.pessoaFisica.sexo=='M'}" name="manhattan-layout/images/IconeHomem.png" style="width: 50px"/>
+                        <p:graphicImage rendered="#{p.pessoaFisica.sexo=='F'}" name="manhattan-layout/images/iconeMulher.png" style="width: 50px"/>
+                        <h:outputText value="#{p.pessoaFisica.nome}" />
+                        <br/>
+                        <p:commandButton update=":form:tab1:pacDetail: :form:tab1:pac1: :form:tab2:pac3:" oncomplete="PF('dlgPaciente').show();"
+                                         icon="fa fa-search" value="Paciente" style="background-color: #06bad2">
+                            <f:setPropertyActionListener value="#{p}" target="#{pacienteControle.paciente}"/>
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:panel>
+            </p:dataGrid>
+
+            <p:dialog header="Informações do Paciente" widgetVar="dlgPaciente" modal="true" hideEffect="fade" showEffect="fade"
+                      resizable="true" responsive="true" width="700" closable="false">
+                <p:tabView  id="tab1">
+                    <p:tab  title="Dados do Paciente">
+                        <p:panelGrid layout="grid" id="pacDetail" columns="3" rendered="#{not empty pacienteControle.paciente}">
+                            <h:panelGroup>
+                                <h:outputText value="Código:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.id}" />   
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Nome:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.nome}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="CPF:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.cpf}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Endereço:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.endereco} - #{pacienteControle.paciente.pessoaFisica.numero}" />
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Bairro:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.bairro}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Cidade:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.cidade.nome} - #{pacienteControle.paciente.pessoaFisica.estado.sigla}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Contato:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.telefone}  #{pacienteControle.paciente.pessoaFisica.celular}"/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.telResp_Paciente}  #{pacienteControle.paciente.pessoaFisica.celResp_Paciente}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Email:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.email}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Data de Nascimento:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.pessoaFisica.data_nasc}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </h:panelGroup>
+                        </p:panelGrid>    
+                    </p:tab>
+
+                    <p:tab title="Informações do Tratamento">
+                        <p:panelGrid layout="grid" id="pac1" columns="3" rendered="#{not empty pacienteControle.paciente}">
+                            <h:panelGroup>
+                                <p:outputLabel value="Doutor(a):" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.doutor.nome}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Tratamento:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.tratamento.nome}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Data de Início:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.data}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Status:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.status?'Ativo':'Inativo'}" rendered="#{pacienteControle.paciente.status eq 'true'}" style="color: green"/>
+                                <h:outputText value="#{pacienteControle.paciente.status?'Ativo':'Inativo'}" rendered="#{pacienteControle.paciente.status eq 'false'}" style="color: red"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Data Final:" style="color: #000000"/><br/>
+                                <h:outputText value="#{pacienteControle.paciente.dataFinal}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </p:tab>               
+                </p:tabView>
+
+                <br />
+
+                <p:tabView id="tab2">
+                    <p:tab title="Informações de Contas do Paciente">
+                        <h:panelGrid columns="1" id="pac3">
+                            <p:dataTable emptyMessage="Não há nenhuma Conta Pendente" rows="3" paginator="true" paginatorPosition="bottom"
+                                         value="#{pacienteControle.paciente.contasReceber}" var="cr">
+
+                                <p:column headerText="Parcela" style="text-align: center; width: 10%">
+                                    <h:outputText value="#{cr.crNumParcela}" />
+                                </p:column>
+
+                                <p:column headerText="Vencimento" style="text-align: center">
+                                    <h:outputText value="#{cr.crDataVencimento}" style="color: red;">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Valor" style="text-align: center">
+                                    <h:outputText value="#{cr.crValor}" style="color: blue; width: 10%">
+                                        <f:convertNumber locale="pt_BR" type="currency" currencySymbol="R$ "/>
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Pagamento" style="text-align: center">
+                                    <h:outputText rendered="#{cr.crDataRecebimento!=null}" value="#{cr.crDataRecebimento}" style="color: green">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                                    </h:outputText>
+                                    <h:outputText rendered="#{cr.crDataRecebimento==null}" value="Pendente" style="color: red"/>
+                                </p:column>
+
+                                <p:column headerText="Opção" style="text-align: center">
+                                    <p:commandButton value="Pagar" icon="fa fa-money" style="background-color: green" ajax="false"
+                                                     disabled="#{cr.crDataRecebimento!=null}" action="/app/Adm-Fin/ContasReceber/ListaContasReceber.xhtml"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGrid>
+                    </p:tab>
+                </p:tabView>
+
+                <br />
+
+                <p:commandButton value="Sair" icon="fa fa-close" style="background-color: red"
+                                 ajax="false" action="ListaPaciente"/>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

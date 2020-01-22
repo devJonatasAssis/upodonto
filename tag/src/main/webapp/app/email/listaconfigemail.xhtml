@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form>
+            <p:growl autoUpdate="true"/>
+            <h:panelGrid columns="2">
+                <p:commandButton value="Nova Configuração de Email" icon="fa fa-plus" style="background-color: green" ajax="false"
+                                 actionListener="#{configEmailControle.novo()}" id="btn"
+                                 action="ConfigEmail" rendered="#{configEmailControle.config_Email.id == null}"/>
+            </h:panelGrid>
+            
+            <br/>
+            
+            <p:dataTable value="#{configEmailControle.listaTodos()}" var="c" emptyMessage="Não há nenhum registro nessa Tabela">
+                <p:column headerText="Nome de Visualização">
+                    #{c.nome_visualizao}
+                </p:column>
+                
+                <p:column headerText="Email" style="text-align: center">
+                    #{c.email}
+                </p:column>
+                
+                <p:column headerText="Servidor SMTP" style="text-align: center">
+                    #{c.servidor_smtp}
+                </p:column>
+                
+                <p:column headerText="Porta SMTP" style="text-align: center">
+                    #{c.port_servidor_smtp}
+                </p:column>
+                
+                <p:column headerText="Opções" style="text-align: center">
+                    <p:commandButton value="Excluir" icon="fa fa-trash" style="background-color: red"
+                                     onclick="if (!confirm('Deseja realmente excluir este registro?'))
+                                         return false" ajax="false" actionListener="#{configEmailControle.excluir(c)}">
+                        <f:ajax event="click" render="btn"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

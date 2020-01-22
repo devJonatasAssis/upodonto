@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <p:growl autoUpdate="true" />
+            <p:panel header="Estoque">
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Inserir Estoque no Produto" oncomplete="PF('dlgAjustaEstoque').show();" immediate="true"
+                                     icon="fa fa-plus" style="background-color: green" actionListener="#{ajustaEstoqueControle.novo()}"/>
+                </h:panelGrid>
+                
+                <br/>
+                
+                <p:dataTable emptyMessage="Não há nenhum Registro" rows="20" paginator="true"
+                             paginatorPosition="bottom" var="est" value="#{produtoControle.listar}">
+                    
+                    <p:column headerText="Código">
+                        #{est.id}
+                    </p:column>
+                    
+                    <p:column headerText="Nome do Produto">
+                        #{est.nome}
+                    </p:column>
+                    
+                    <p:column headerText="Estoque">
+                        #{est.estoque}
+                    </p:column>
+                </p:dataTable>
+                
+                <p:dialog widgetVar="dlgAjustaEstoque" modal="true" showEffect="slide"
+                          hideEffect="slide" header="Ajuste de Estoque">
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Tipo de Ajuste:" />
+                        <p:selectOneRadio value="#{ajustaEstoqueControle.ajustaEstoque.tipoAjusteEstoque}">
+                            <f:selectItems value="#{ajustaEstoqueControle.tipoAjusteEstoques()}" var="aju"
+                                           itemLabel="#{aju.descricao}" itemValue="#{aju}"/>
+                        </p:selectOneRadio> 
+                    </h:panelGrid>
+                    
+                    <br />
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputText value="Data do Ajuste:" />
+                        <p:calendar value="#{ajustaEstoqueControle.ajustaEstoque.dataAjuste}" 
+                                    disabled="true"/>
+                        
+                        <h:outputText value="Produto:" />
+                        <p:selectOneMenu value="#{ajustaEstoqueControle.ajustaEstoque.produto}"
+                                         converter="#{ajustaEstoqueControle.produtoConverter}" filter="true"
+                                         filterMatchMode="contains">
+                            <f:selectItems value="#{ajustaEstoqueControle.listaProduto()}" 
+                                           var="p" itemLabel="#{p.nome}" itemValue="#{p}"/>
+                        </p:selectOneMenu>
+                        
+                        <h:outputText value="Quantidade:" />
+                        <p:inputText value="#{ajustaEstoqueControle.ajustaEstoque.ajusteQuantidade}" />
+                        
+                        <p:outputLabel value="Motivo:" for="motivo"/>
+                        <p:inputTextarea id="motivo" value="#{ajustaEstoqueControle.ajustaEstoque.ajusteMotivo}"
+                                         required="true" requiredMessage="Motivo do Ajuste é Obrigatório !"/>
+                    </h:panelGrid>
+                    
+                    <br/>
+                    
+                    <h:panelGrid columns="2">
+                        <p:commandButton actionListener="#{ajustaEstoqueControle.salvar()}" value="Salvar" ajax="false" 
+                                         action="listaestoque" style="background-color: green" icon="fa fa-check"/>
+                        
+                        <p:commandButton value="Cancelar" icon="fa fa-close" ajax="false" action="listaestoque" 
+                                         style="background-color: red" immediate="true"/>
+                    </h:panelGrid>
+                </p:dialog>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

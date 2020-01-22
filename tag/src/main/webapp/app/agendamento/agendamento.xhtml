@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:b="http://bootsfaces.net/ui">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .statusAtendido{
+                background-color: green !important;
+                border: solid 1px green !important;
+            }
+
+            .statusConfirmado{
+                background-color: peru !important;
+                border: solid 1px peru !important;
+            }
+
+            .statusConfirmar{
+                background-color: blue !important;
+                border: solid 1px blue !important;
+            }
+
+            .statusDesmarcou{
+                background-color: rosybrown !important;
+                border: solid 1px rosybrown !important;
+            }
+
+            .statusEmAtendimento{
+                background-color: orange !important;
+                border: solid 1px orange !important;
+            }
+
+            .statusFaltou{
+                background-color: red !important;
+                border: solid 1px red !important;
+            }
+
+            .statusAguardando{
+                background-color: #06bad2 !important;
+                border: solid 1px #06bad2 !important;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl autoUpdate="true" id="mensagem" showDetail="true"/>
+            <h3>Agenda de Pacientes</h3>
+            <h:panelGrid columns="9">
+                <h:outputText value="Guia de Status da Consulta:" />
+                <p:commandButton style="background-color: green" value="Atendido"/>
+                <p:commandButton style="background-color: peru" value="Confirmado"/>
+                <p:commandButton style="background-color: blue" value="Confirmar"/>
+                <p:commandButton style="background-color: rosybrown" value="Desmarcou"/>
+                <p:commandButton style="background-color: red" value="Faltou"/>
+                <p:commandButton style="background-color: orange" value="Em Atendimento"/>
+                <p:commandButton style="background-color: #06bad2" value="Aguardando"/>
+            </h:panelGrid>
+
+            <br />
+
+            <h:panelGrid id="pgForm" columns="4">
+                <p:outputLabel value="Filtrar por:" />
+                <p:selectOneRadio value="#{agendamentoControle.tipoDeBusca}">
+                    <f:selectItem itemLabel="Todos" itemValue="T" />
+                    <f:selectItem itemLabel="por Nome" itemValue="N" />
+                    <f:ajax event="change" render="pgForm"/>
+                </p:selectOneRadio>
+
+                <p:inputText placeholder="Pesquise um Paciente..." id="campoFiltro" title="Pressione Enter para Filtrar"
+                             value="#{agendamentoControle.filtro}" rendered="#{agendamentoControle.tipoDeBusca=='N'}">
+                    <f:ajax event="change" render="schedule" listener="#{agendamentoControle.carregaLista()}"/>
+                </p:inputText>
+
+                <p:commandButton icon="fa fa-search" value="Filtrar" update="schedule" 
+                                 actionListener="#{agendamentoControle.carregaLista()}"
+                                 />
+            </h:panelGrid>
+            <br />
+
+            <p:schedule id="schedule" widgetVar="mySchedule" value="#{agendamentoControle.agendaModel}"
+                        timeZone="GMT-3" clientTimeZone="America/Sao_Paulo" scrollTime="07:00:00" style="width: 100%"> 
+
+                <p:ajax event="dateSelect" update=":formulario:eventDetails" oncomplete="PF('eventDialog').show();" listener="#{agendamentoControle.novoAgendamento}"/>
+                <p:ajax event="eventSelect" listener="#{agendamentoControle.quandoSelecionado}" update=":formulario:eventDetails" oncomplete="PF('eventDialog').show();"/>
+                <p:ajax event="eventMove" listener="#{agendamentoControle.mover}" update="schedule" />
+                <p:ajax event="eventResize" listener="#{agendamentoControle.redimensionar}" update="schedule"/>
+            </p:schedule>
+        </h:form>
+
+        <p:dialog widgetVar="eventDialog" header="Agedamento de Pacientes" showEffect="clip" hideEffect="clip"
+                  modal="true">
+            <h:form id="formulario">
+                <h:panelGrid id="eventDetails" columns="1">
+                    <p:outputLabel value="Paciente:" for="paciente"/>
+                    <p:selectOneMenu id="paciente" filter="true" filterMatchMode="startsWith" value="#{agendamentoControle.agendamento.pessoaFisica}"
+                                     converter="#{agendamentoControle.pacienteConverter}" style="width: 70%">
+                        <f:selectItems value="#{agendamentoControle.listaPacienteTrue()}"
+                                       var="pac" itemLabel="#{pac.nome}" itemValue="#{pac}"/>
+                    </p:selectOneMenu>
+
+                    <h:panelGrid columns="2">
+
+                        <h:panelGroup>
+                            <p:outputLabel value="Data Inicial:" for="dtInicial"/><br/>
+                            <p:calendar pattern="dd/MM/yyyy" id="dtInicial" disabled="true"
+                                        value="#{agendamentoControle.agendamento.dtInicial}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <p:outputLabel value="Hora Inicial:" /><br/>
+                            <p:calendar mask="99:99" pattern="HH:mm" value="#{agendamentoControle.agendamento.horaInicial}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <p:outputLabel value="Data Final:" for="dtFinal"/><br/>
+                            <p:calendar pattern="dd/MM/yyyy" id="dtFinal"
+                                        value="#{agendamentoControle.agendamento.dtFinal}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <p:outputLabel value="Hora Final" /><br/>
+                            <p:calendar style="width: 40%" pattern="HH:mm" mask="99:99" value="#{agendamentoControle.agendamento.horaFinal}"/>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="Sala:" /><br/>
+                            <p:autoComplete placeholder="Digite uma Sala..." value="#{agendamentoControle.agendamento.sala}"
+                                            converter="#{agendamentoControle.salaConverter}"
+                                            completeMethod="#{agendamentoControle.listaFiltrandoSala}"
+                                            var="sala" itemLabel="#{sala.descricao}"
+                                            itemValue="#{sala}"
+                                            forceSelection="true"
+                                            widgetVar="salaWid"
+                                            onclick="PF('salaWid').search('')"
+                                            emptyMessage="Nenhuma Sala Encontrada"/>
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <p:outputLabel value="Cadeira" /><br/>
+                            <p:autoComplete placeholder="Digite uma Sala..." value="#{agendamentoControle.agendamento.cadeira}"
+                                            converter="#{agendamentoControle.cadeiraConverter}"
+                                            completeMethod="#{agendamentoControle.listaFiltrandoCadeira}"
+                                            var="cad" itemLabel="#{cad.descricao}"
+                                            itemValue="#{cad}"
+                                            forceSelection="true"
+                                            widgetVar="cadeiraWid"
+                                            onclick="PF('cadeiraWid').search('')"
+                                            emptyMessage="Nenhuma Cadeira Encontrada"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                        <h:panelGroup>
+                            <p:outputLabel value="Tipo da Consulta:" for="tpConsulta"/><br/>
+                            <p:selectOneMenu filter="true" filterMatchMode="startsWith" id="tpConsulta"
+                                             value="#{agendamentoControle.agendamento.tipoConsulta}">
+                                <f:selectItems value="#{agendamentoControle.tipoConsultas()}" 
+                                               var="st" itemLabel="#{st.descricao}" itemValue="#{st}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <p:outputLabel value="Status:" for="status"/><br/>
+                            <p:selectOneMenu filter="true" filterMatchMode="startsWith" id="status"
+                                             value="#{agendamentoControle.agendamento.status}">
+                                <f:selectItems value="#{agendamentoControle.statusAgendamentos()}" 
+                                               var="st" itemLabel="#{st.descricao}" itemValue="#{st}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                    <p:outputLabel value="Observação:" for="obs"/>
+                    <p:inputTextarea id="obs" value="#{agendamentoControle.agendamento.obs_agendamento}" style="width: 80%"/>
+
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" ajax="false" style="background-color: green"
+                                     update=":mensagem:schedule" actionListener="#{agendamentoControle.salvar()}" action="agendamento"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

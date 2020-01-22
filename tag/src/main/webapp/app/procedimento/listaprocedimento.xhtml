@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:b="http://bootsfaces.net/ui">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <p:growl autoUpdate="true" showDetail="true"/>
+            <h:panelGrid columns="2">
+                <p:commandButton value="Novo Tratamento" icon="fa fa-plus" style="background-color: green" 
+                                 actionListener="#{procedimentoControle.novo()}"
+                                 action="editaprocedimento" ajax="false"/>
+            </h:panelGrid>
+
+            <br/>
+
+            <p:dataTable emptyMessage="Não há nenhum Paciente em tratamento" rows="20" paginator="true"
+                         paginatorPosition="bottom" value="#{procedimentoControle.listar}" var="t">
+
+                <p:column headerText="Nome do Paciente" filterBy="#{t.pessoaFisica.nome}" filterMatchMode="contains">
+                    #{t.pessoaFisica.nome}
+                </p:column>
+
+                <p:column headerText="Nome do Tratamento" filterBy="#{t.tratamento.nome}" filterMatchMode="contains" style="text-align: center">
+                    <h:outputText value="#{t.tratamento.nome}" rendered="#{t.tratamento.nome!=null}"/>
+                    <h:outputText rendered="#{t.tratamento.nome==null}" value="Odontograma"/>
+                </p:column>
+
+                <p:column headerText="Nome do Doutor(a)" filterBy="#{t.doutor.nome}" filterMatchMode="contains" style="text-align: center">
+                    #{t.doutor.nome}
+                </p:column>
+
+                <p:column headerText="Data de Início" style="text-align: center">
+                    <p:outputLabel value="#{t.data}">
+                        <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Ativo" style="text-align: center">
+                    <h:outputText value="#{t.status?'Sim':'Não'}" rendered="#{t.status eq 'true'}" style="color: green"/>
+                    <h:outputText value="#{t.status?'Sim':'Não'}" rendered="#{t.status eq 'false'}" style="color: red"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

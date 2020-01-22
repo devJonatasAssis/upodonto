@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Relatorio_Tratamento" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="69dff5ec-c958-4e50-b8a1-d90d32689ac2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="56"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/jonatas/Documentos/UpgradeSistemas/upodonto/UpOdonto/UpOdonto/tag/src/main/webapp/WEB-INF/reports/"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+     tratamento."id" AS tratamento_id,
+     tratamento."data_cadastro" AS tratamento_data_cadastro,
+     tratamento."nome_tratamento" AS tratamento_nome_tratamento,
+     tratamento."valor_trat" AS tratamento_valor_trat
+FROM
+     "public"."tratamento" tratamento]]>
+	</queryString>
+	<field name="tratamento_id" class="java.lang.Long"/>
+	<field name="tratamento_data_cadastro" class="java.sql.Date"/>
+	<field name="tratamento_nome_tratamento" class="java.lang.String"/>
+	<field name="tratamento_valor_trat" class="java.math.BigDecimal"/>
+	<variable name="tratamento_nome_tratamento_1" class="java.lang.Integer" resetType="Column" calculation="Count">
+		<variableExpression><![CDATA[$F{tratamento_nome_tratamento}]]></variableExpression>
+	</variable>
+	<variable name="tratamento_valor_trat_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{tratamento_valor_trat}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="101" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="100" uuid="a7094db5-bca2-4533-a323-a41cf460d5e2"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subReport_Cabecalho.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="35" uuid="9090b75f-ca4d-4bbf-8f9d-9a67ea6c73ad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Relatório de Tratamento]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="21" width="274" height="20" uuid="ab9ab485-125c-4bf4-a6d7-c1c68e308d4a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome do Tratamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="274" y="21" width="150" height="20" uuid="01781cdf-4d10-4ee1-9d09-7905a353762a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="424" y="21" width="131" height="20" uuid="03d2b30e-4612-4f69-95dd-05c54abc899e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data de Cadastro]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="274" height="20" uuid="dac90212-fc13-4723-9904-c09ceb836ca6"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tratamento_nome_tratamento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="274" y="0" width="150" height="20" uuid="12365d0c-6a83-4fa0-8b84-545be240ab46"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tratamento_valor_trat}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="424" y="0" width="131" height="20" uuid="0ed2f70c-56b1-44dd-80a6-55ca67105ce8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tratamento_data_cadastro}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="92" splitType="Stretch">
+			<textField>
+				<reportElement x="424" y="42" width="131" height="20" forecolor="#2C9000" uuid="e529a7c8-de5f-459b-8975-690875445c73"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{tratamento_nome_tratamento_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="257" y="42" width="167" height="20" uuid="908c5b35-c582-4fd0-9035-581d821a282d"/>
+				<text><![CDATA[Quantidade de Tratamento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="62" width="167" height="20" uuid="1092dbab-dce8-450f-8c9f-2ce3fdca45e6"/>
+				<text><![CDATA[Soma do Valor dos Tratamentos:]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="424" y="62" width="131" height="20" forecolor="#2C9000" uuid="28ff0fea-09f2-4f7b-a0f0-dfc06cd3f347"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{tratamento_valor_trat_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

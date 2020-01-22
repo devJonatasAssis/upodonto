@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="head">
+        <style type="text/css">
+
+            *{
+                margin: 0;
+                padding: 0;
+            }
+
+            #div1{
+                width: 335px;
+                height: 310px;
+                margin: 10px;
+                background: white;
+                float: left;
+            }
+            #div2{
+                width: 335px;
+                height: 310px;
+                margin: 10px;
+                background: white;
+                float: left;
+            }
+            #div3{
+                width: 300px;
+                height: 310px;
+                margin: 10px;
+                background: white;
+                float: left;
+            }
+
+            #div4{
+                width: 50%;
+                height: 350px;
+                margin: 10px;
+                background: white;
+                float: left;
+            }
+
+            #div5{
+                width: 46%;
+                height: 350px;
+                margin: 10px;
+                background: white;
+                float: right; 
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:growl autoUpdate="true" showDetail="true"/>
+        <h:form>
+            <div id="div1">
+                <h:outputLabel value="Contas a Receber" style="position: relative; left: 30%; font-size: 126%; top: 3%;"/>
+                <p:commandButton icon="fa fa-search" value="Ver" style="position: relative; left: 3%; top: 75%;"/>
+                <h:outputLabel value="#{dashboardControle.mostraContasReceber()}"
+                               style="position: relative; left: -25%; top: 55%; color: green; font-size: 200%">
+                    <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"/>
+                </h:outputLabel>
+                <p:graphicImage library="manhattan-layout" name="images/dashboard/ContasPagar.jpg"
+                                style="position: relative; width: 40%; top: 10%; left: 30%"/>
+
+            </div>
+
+            <div id="div2">
+                <h:outputLabel value="Contas a Pagar" style="position: relative; left: 34%; font-size: 126%; top: 3%" />
+                <p:commandButton icon="fa fa-search" value="ver" style="position: relative; left: 10%; top: 75%;"/>
+                <h:outputLabel value="#{dashboardControle.mostraContasPagar()}"
+                               style="position: relative; left: -17%; top: 55%; color: red; font-size: 200%">
+                    <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"/>
+                </h:outputLabel>
+                <p:graphicImage library="manhattan-layout" name="images/dashboard/iconeDinheiro.png"
+                                style="position: relative; width: 30%; top: 10%; left: 32%"/>
+            </div>                                                  
+
+            <div id="div3">
+                <h:outputLabel value="Total de Pacientes" style="position: relative; left: 25%; font-size: 126%; top: -15%" />
+                <p:graphicImage library="manhattan-layout" name="images/dashboard/paciente2.jpeg"
+                                style="position: relative; width: 30%; top: 25%; left: -10%"/>
+                <p:outputLabel value="#{dashboardControle.quantPaciente()}" style="position: relative; font-size: 300%; top: 40%; left: -34%"/>
+                <p:commandButton value="Ver pacientes" icon="fa fa-search" style="position: relative; top: 49%; left: 30%"/>
+            </div>
+            <br/>
+
+            <div id="div4">
+                <p:chart type="bar" model="#{dashboardControle.grafico1}" style="width: 80%;" />
+            </div>
+
+            <div id="div5">
+                <h:outputLabel value="Agendamentos" style="position: relative; left: 35%; font-size: 126%; top: 1%;"/>
+                <br/>
+                <p:dataTable value="#{dashboardControle.listaAgenda()}" var="ag" paginator="true" paginatorPosition="bottom"
+                             rows="10" style="top: 100px">
+                
+                    <p:column headerText="Paciente">
+                        #{ag.pessoaFisica.nome}
+                    </p:column>
+                    
+                    <p:column headerText="Data Inicial" sortBy="#{ag.dtInicial}">
+                        <h:outputLabel value="#{ag.dtInicial}">
+                            <f:convertDateTime locale="pt_BR" type="date" pattern="dd/MM/yyyy HH:mm"
+                                               timeZone="GMT+3"/>
+                        </h:outputLabel>
+                    </p:column>
+                    
+                    <p:column headerText="Data Final" sortBy="#{ag.dtFinal}">
+                        <h:outputLabel value="#{ag.dtFinal}">
+                            <f:convertDateTime locale="pt_BR" type="date" pattern="dd/MM/yyyy HH:mm"
+                                               timeZone="GMT+3"/>
+                        </h:outputLabel>
+                    </p:column>
+                </p:dataTable>
+                
+                <br/>
+                <p:commandButton value="Agendar" icon="fa fa-plus" ajax="false" action="/app/Agendamento/Agendamento.xhtml" style="background-color: green"/>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

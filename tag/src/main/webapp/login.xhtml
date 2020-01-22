@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://bootsfaces.net/ui">
+
+    <style>
+        .logoUp{
+            width: 100%;
+            height: 110%;
+            left: 0%; /* posiciona a 90px para a esquerda */ 
+            top: -10%;
+            position: absolute;
+
+        }
+        
+        .logoUpOdonto{
+            width: 30%;
+            height: 110%;
+            left: 0%; /* posiciona a 90px para a esquerda */ 
+            top: -45%;
+            position: absolute;
+
+        }
+        
+        .imagemFundo{
+            background-image: url("imagem1.png")
+        }
+    </style>
+
+    <h:head>
+        <h:outputStylesheet library="manhattan-layout" name="/css/style.css" />
+        <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css' />
+        <h:outputStylesheet library="manhattan-layout" name="/css/bootstrap.css" />
+        <h:outputScript library="manhattan-layout" name="/js/calendario/CalendarioBrasileiro.js" />
+        <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <title>Login UpOdonto</title>
+
+    </h:head>
+
+    <body>
+        <p:growl autoUpdate="true" />
+        <h:form>
+            <p:graphicImage library="manhattan-layout" name="/images/login/imagem4.jpg" class="logoUp"/>
+
+            <div class="login-form">
+                <p:graphicImage library="manhattan-layout" name="/images/upgrade/upgradeSistemas.png" style="width: 90%; top: 20%;"/>
+                <p:graphicImage library="manhattan-layout" name="/images/logoUpOdonto.png" style="width: 30%; position: absolute; left: 35%; top: 43%;"/>
+                <div class="form-group">
+                    <b:inputText type="text" class="form-control" value="#{loginControle.login}" 
+                                 placeholder="Usuário " id="usuario" required="true" requiredMessage="O Campo Usuário é Obrigatório !"/>
+                    <i class="fa fa-user"></i>
+                </div>
+                
+                <div class="form-group log-status">
+                    <b:inputText type="password" class="form-control" placeholder="Senha" id="senha" value="#{loginControle.senha}"
+                                 required="true" requiredMessage="O Campo Senha é Obrigatório !"/>
+                    <i class="fa fa-lock"></i>
+                </div>
+                
+                <span class="alert">Invalid Credentials</span>
+                <a class="link" href="recuperarSenha.xhtml">Esqueceu Sua Senha ?</a>
+                <p:commandButton value="Entrar" class="log-btn" action="#{loginControle.logar()}"
+                                 ajax="false" style="background-color: green" icon="fa fa-check"/>
+
+            </div>
+            <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+            <script  src="js/login.js"></script>
+        </h:form>
+    </body>
+
+</html>

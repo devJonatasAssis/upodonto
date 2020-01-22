@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <h:panelGrid columns="6">
+                <p:commandButton value="Novo" icon="fa fa-plus" style="background-color: green"
+                                 onclick="PF('dlgTrat').show();"/>
+                ::::
+                <p:commandButton value="Gerar Relatório Cadastral" icon="fa fa-line-chart" onclick="this.form.target = 'BLANK'"
+                                 actionListener="#{relatorioControle.relatorioCadastralTratamento()}" ajax="false"/>
+            </h:panelGrid>
+
+            <br/>
+
+            <p:dataTable emptyMessage="Não há nenhum Tratamento Cadastrado" rows="10"
+                         paginator="true" paginatorPosition="bottom" value="#{tratamentoControle.listar}"
+                         var="trat">
+
+                <p:column headerText="Código">
+                    #{trat.id}
+                </p:column>
+
+                <p:column headerText="Nome do Tratamento" filterBy="#{trat.nome}" filterMatchMode="contains">
+                    <p:outputLabel value="#{trat.nome}" />
+                </p:column>
+
+                <p:column headerText="Valor">
+                    <p:outputLabel value="#{trat.valor}">
+                        <f:convertNumber currencySymbol="R$" locale="pt_BR" type="currency"/>
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column headerText="Data de Cadastro">
+                    <p:outputLabel value="#{trat.data_cadastro}">
+                        <f:convertDateTime locale="pt_BR"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:dataTable>
+
+            <p:dialog widgetVar="dlgTrat" header="Cadastro de Tratamento" showEffect="slide"
+                      hideEffect="slide" modal="true">
+
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Data de Cadastro:" />
+                    <p:calendar value="#{tratamentoControle.tratamento.data_cadastro}"/>
+
+                    <p:outputLabel value="Nome do Tratamento:" />
+                    <p:inputText value="#{tratamentoControle.tratamento.nome}"/>
+
+                    <p:outputLabel value="Valor:" />
+                    <pe:inputNumber decimalSeparator="," symbol="R$ " minValue="0.00"
+                                    decimalPlaces="2" value="#{tratamentoControle.tratamento.valor}"/>
+                </h:panelGrid>
+
+                <br />
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" ajax="false" 
+                                     style="background-color: green" actionListener="#{tratamentoControle.salvar()}"
+                                     action="listatratamento"/>
+
+                    <p:commandButton value="Cancelar" icon="fa fa-close" ajax="false" 
+                                     style="background-color: red" action="listatratamento"/>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

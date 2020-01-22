@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <p:growl autoUpdate="true"/>
+            <p:panel header="Lista de Pessoas">
+                <h:panelGrid columns="40">
+                    <p:commandButton value="Nova Pessoa Física" icon="fa fa-plus"
+                                     ajax="false" style="background-color: green"
+                                     action="editapessoafisica" actionListener="#{pessoaFisicaControle.novo()}"/>
+                    Ou
+                    <p:commandButton value="Nova Pessoa Jurídica" icon="fa fa-plus" 
+                                     ajax="false" style="background-color: green"
+                                     action="editapessoajuridica"/>
+                    
+<!--                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    <h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/><h:outputText value=":" style="color: white"/>
+                    
+                    <p:commandButton value="Visualizar Pacientes em Tratamento" icon="fa fa-search" style="background-color: #06bad2"
+                                     ajax="false" action="ListaPaciente"/>-->
+                </h:panelGrid>
+
+                <br />
+
+                <p:dataTable paginator="true" paginatorPosition="bottom" rows="20"
+                             emptyMessage="Não há nenhuma Pessoa Cadastrada"
+                             value="#{pessoaControle.listaPessoa()}" var="pes">
+
+                    <p:column headerText="Código" style="width: 8%">
+                        #{pes.id}
+                    </p:column>
+
+                    <p:column headerText="Nome/Nome Fantasia" filterBy="#{pes.nome}" filterMatchMode="contains">
+                        #{pes.nome}
+                    </p:column>
+
+                    <p:column headerText="CPF/CNPJ" filterBy="#{pes.documento}" filterMatchMode="contains" style="width: 15%">
+                        #{pes.documento}
+                    </p:column>
+
+                    <p:column headerText="Fornecedor" style="width: 10%">
+                        <h:outputText value="#{pes.fornecedor?'Sim':'Não'}" rendered="#{pes.fornecedor eq 'true'}" style="color: green"/>
+                        <h:outputText value="#{pes.fornecedor?'Sim':'Não'}" rendered="#{pes.fornecedor eq 'false'}" style="color: red"/>
+                    </p:column>
+
+                    <p:column headerText="Funcionário" style="width: 10%">
+                        <h:outputText value="#{pes.funcionario?'Sim':'Não'}" rendered="#{pes.funcionario eq 'true'}" style="color: green"/>
+                        <h:outputText value="#{pes.funcionario?'Sim':'Não'}" rendered="#{pes.funcionario eq 'false'}" style="color: red"/>                    </p:column>
+
+                    <p:column headerText="Paciente" style="width: 8%">
+                        <h:outputText value="#{pes.paciente?'Sim':'Não'}" rendered="#{pes.paciente eq 'true'}" style="color: green"/>
+                        <h:outputText value="#{pes.paciente?'Sim':'Não'}" rendered="#{pes.paciente eq 'false'}" style="color: red"/>
+                    </p:column>
+                </p:dataTable>
+
+                <br/>
+
+
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

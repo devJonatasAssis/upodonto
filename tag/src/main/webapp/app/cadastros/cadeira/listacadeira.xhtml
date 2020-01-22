@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl autoUpdate="true" id="msgs"/>
+
+            <h:panelGrid columns="2">
+                <p:commandButton value="Novo" icon="fa fa-plus" style="background-color: green"
+                                 actionListener="#{cadeiraControle.novo()}" oncomplete="PF('dlgCadeira').show();"/>
+            </h:panelGrid>
+            <br/>
+            <p:dataTable emptyMessage="Não há nenhuma Cadeira cadastra !" var="item"
+                         value="#{cadeiraControle.listar}" id="tabela" paginator="true" paginatorPosition="bottom"
+                         editable="true" selectionMode="single" selection="#{cadeiraControle.cadeira}" rowKey="#{item.id}">
+                
+                <p:ajax event="rowEdit" listener="#{cadeiraControle.onRowEdit}" update=":form:msgs"/>
+                
+                <p:column headerText="Código" style="text-align: center">
+                    #{item.id}
+                </p:column>
+
+                <p:column headerText="Data de Cadastro" style="text-align: center">
+                    <h:outputText value="#{item.data_cadastro}">
+                        <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Descrição" style="text-align: center">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{item.descricao}" /></f:facet>
+                        <f:facet name="input"><p:inputText value="#{item.descricao}" style="width:100%" label="Descrição"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                
+
+                <p:column headerText="Status" style="text-align: center">
+                    <h:outputText value="#{item.ativo?'Ativo':'Inativo'}" rendered="#{item.ativo eq 'true'}" style="color: green"/>
+                    <h:outputText value="#{item.ativo?'Ativo':'Inativo'}" rendered="#{item.ativo eq 'false'}" style="color: red"/>
+                </p:column>
+
+                <p:column style="width:32px">
+                    <p:rowEditor/>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Excluir" icon="fa fa-trash" style="background-color: red"
+                                     action="#{cadeiraControle.remove()}" ajax="false"/> 
+                </f:facet>
+            </p:dataTable>
+
+            <p:dialog widgetVar="dlgCadeira" modal="true" closable="false">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Data de Cadastro:" />
+                    <p:calendar value="#{cadeiraControle.cadeira.data_cadastro}" disabled="true"/>
+
+                    <h:outputText value="Descrição:" />
+                    <p:inputText value="#{cadeiraControle.cadeira.descricao}" />
+
+                    <h:outputText value="Ativo:" />
+                    <p:selectBooleanCheckbox value="#{cadeiraControle.cadeira.ativo}"/>
+                </h:panelGrid>
+
+                <br/>
+
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-plus" ajax="false" style="background-color: green" update="s:tabela:"
+                                     actionListener="#{cadeiraControle.salvar()}" oncomplete="PF('dlgCadeira').hide();"/>
+
+                    <p:commandButton value="Cancelar" icon="fa fa-close" ajax="false" style="background-color: red"
+                                     actionListener="listacadeira" oncomplete="PF('dlgCadeira').hide();"/>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton value="Novo" icon="fa fa-plus" style="background-color: green"
+                                     oncomplete="PF('dlgLancamentos').show();"/>
+                    
+                </f:facet>
+                
+                <f:facet name="right">
+                    <p:commandButton value="Editar" icon="fa fa-pencil" />
+                    <p:commandButton value="Excluir" icon="fa fa-trash" style="background-color: red"/>
+                    <p:commandButton value="Exportar para XLS" icon="fa fa-trash" style="background-color: #06bad2"/>
+                </f:facet>
+            </p:toolbar>
+            
+            <br/>
+            
+            <p:dataTable>
+                <p:column headerText="Descrição">
+                    
+                </p:column>
+                <p:column headerText="Data do Lançamento">
+                    
+                </p:column>
+                <p:column headerText="Valor">
+                    
+                </p:column>
+                <p:column headerText="Tipo do Lançamento">
+                    
+                </p:column>
+            </p:dataTable>
+            
+            <p:dialog widgetVar="dlgLancamentos" modal="true" header="Lançamentos de Despesas">
+                <h:form>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Data de Lançamento:" />
+                        <p:calendar />
+                        
+                        <p:outputLabel value="Tipo de Lançamento:" />
+                        <p:selectOneMenu>
+                            
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel value="Descrição:" />
+                        <p:inputText />
+                        
+                        <p:outputLabel value="Valor:" />
+                        <p:inputText>
+                            <f:convertNumber type="currency" locale="pt_BR"
+                                             currencySymbol="R$ " maxFractionDigits="2"/>
+                        </p:inputText>
+                    </h:panelGrid>
+                </h:form>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

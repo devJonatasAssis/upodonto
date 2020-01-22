@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl autoUpdate="true" />
+            <h:panelGrid>
+                <p:commandButton value="Nova Venda" icon="fa fa-plus" ajax="false" actionListener="#{vendaControle.novo()}"
+                                 style="background-color: green" action="editavenda"/>
+            </h:panelGrid>
+
+            <br/>
+
+            <p:dataTable emptyMessage="Não há nenhuma Venda Registrada" rows="20" var="ven"
+                         paginator="true" paginatorPosition="bottom" value="#{vendaControle.listaVenda()}">
+
+                <p:column headerText="Código">
+                    #{ven.id}
+                </p:column>
+
+                <p:column headerText="Cliente" filterBy="#{ven.pessoa.nome}" filterMatchMode="contains">
+                    <h:outputText value="#{ven.pessoa.nome}" style="color: blue"/>
+                </p:column>
+
+                <p:column headerText="Valor" style="text-align: center">
+                    <h:outputText value="#{ven.vendaTotalBruto}" style="color: green">
+                        <f:convertNumber type="currency" locale="pt_BR" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Data da Venda" style="width: 15%">
+                    <h:outputText value="#{ven.dataVenda}">
+                        <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Status" style="text-align: center">
+                    <h:outputText value="#{ven.statusCompraVenda.descricao}" rendered="#{ven.statusCompraVenda eq 'ABERTO'}" style="color: red"/>
+                    <h:outputText value="#{ven.statusCompraVenda.descricao}" rendered="#{ven.statusCompraVenda eq 'FINALIZAR'}" style="color: green"/>
+                </p:column>
+                <p:column headerText="Opção">
+                    <p:commandButton icon="fa fa-trash" value="Ecluir" style="background-color: red"
+                                     onclick="if (!confirm('Deseja realmente excluir esta Venda em Aberto ?'))
+                                                  return false"
+                                     disabled="#{ven.statusCompraVenda=='FINALIZAR'}"/>
+
+                    <p:commandButton icon="fa fa-pencil" value="Editar"
+                                     disabled="#{ven.statusCompraVenda=='FINALIZAR'}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

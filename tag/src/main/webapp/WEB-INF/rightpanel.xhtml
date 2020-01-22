@@ -1,0 +1,76 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/manhattan">
+
+    <div class="layout-rightpanel">
+        <div class="nano">
+            <div class="nano-content right-panel-scroll-content">
+                <div class="layout-rightpanel-header">
+                    <div class="weather-day">Agendados do Dia</div>
+                    <div class="weather-date"><p:clock pattern="dd/MM/yyyy HH:mm:ss"/></div>
+                </div>
+
+                <div class="layout-rightpanel-content">
+<!--                    <h1>{rightPanelControle.field("nome")}</h1>
+                    <h2>{rightPanelControle.field("cidade.nome")}, {rightPanelControle.field("estado.sigla")}</h2>-->
+
+                    <div class="weather-today">
+                        <!--                        <p:graphicImage name="images/dashboard/weather-icon-2.svg" library="manhattan-layout" width="60"/>-->
+                    </div>
+
+                    <h:form id="forms">
+                        <p:growl autoUpdate="true" id="msgs"/>
+                        <p:dataTable value="#{rightPanelControle.pacientesEmEspera()}" var="p" paginator="true" emptyMessage="Não há nenhum Agendado."
+                                     paginatorPosition="bottom" rows="5">
+                            <p:column headerText="Agendados do Dia">
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'Confirmar'}" style="background-color:  white; color: blue"/>
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'Confirmado'}" style="background-color:  white; color: peru"/>
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'Aguardando'}" style="background-color:  white; color: #06bad2"/>
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'EmAtendimento'}" style="background-color:  white; color: orange"/>
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'Atendido'}" style="background-color:  white; color: green"/>
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'Desmarcou'}" style="background-color:  white; color: rosybrown"/>
+                                <p:commandButton value="#{p.pessoaFisica.nome}" rendered="#{p.status eq 'Faltou'}" style="background-color:  white; color: red"/>
+                                
+                                
+                                <h:outputText value="#{p.horaInicial}" style="color: green">
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-3"/>
+                                </h:outputText>
+
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+
+                        <p:dataTable value="#{rightPanelControle.pacientesEmAtendimento()}" var="p" rows="3"
+                                     emptyMessage="Nenhum em Atendimento." paginator="true" paginatorPosition="bottom">
+                            <p:column headerText="Em Atendimento">
+                                <p:commandButton value="#{p.pessoaFisica.nome}" style="background-color: white; color: black"/>
+                                <p:commandButton icon="fa fa-check" style="background-color: green" ajax="false"
+                                                 title="Consulta Finalizada" actionListener="#{agendamentoControle.alterarStatus(p)}"/>
+                            </p:column>
+                        </p:dataTable>
+                        
+                        <br/>
+                        
+                        <p:dataTable value="#{rightPanelControle.pacientesDeAmanha()}" var="p" emptyMessage="Não há nenhum Paciente para Amanhã">
+                            <p:column headerText="Agendados de Amanhã">
+                                <p:commandButton value="#{p.pessoaFisica.nome}" style="background-color: white; color: black"/>
+                                <p:commandButton icon="fa fa-envelope" title="Enviar Email de Lembrança" action="#{rightPanelControle.enviarEmailLembranca(p)}" ajax="false"
+                                                 update="msgs"/>
+                                <h:outputText value="#{p.horaInicial}" style="color: green">
+                                    <f:convertDateTime pattern="HH:mm" timeZone="GMT-3"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>

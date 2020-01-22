@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <ui:define name="content">
+        <h:form id="frm">
+            <h:panelGrid columns="6">
+                <p:commandButton value="Novo" icon="fa fa-plus" style="background-color: green"
+                                 onclick="PF('dlgDespesa').show();" action="#{despesaControle.novo()}"/>
+                ::::
+                    <p:commandButton value="Gerar Relatório Cadastral" icon="fa fa-line-chart" onclick="this.form.target='BLANK'"
+                                     actionListener="#{relatorioControle.relatorioCadastralDespesas()}" ajax="false"/>
+            </h:panelGrid>
+            
+            <br/>
+                
+            <p:dataTable emptyMessage="Não há nenhuma Despesa cadastrada" rows="10"
+                         paginator="true" paginatorPosition="bottom" value="#{despesaControle.listar}"
+                         var="des">
+                
+                <p:column headerText="Código">
+                    #{des.id}
+                </p:column>
+                
+                <p:column headerText="Nome da Despesa">
+                    <p:outputLabel value="#{des.nome}" />
+                </p:column>
+                
+                <p:column headerText="Data de Cadastro">
+                    <p:outputLabel value="#{des.data_cadastro}">
+                        <f:convertDateTime locale="pt_BR"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:dataTable>
+            
+            <p:dialog widgetVar="dlgDespesa" header="Cadastro de Despesas Fixas" showEffect="slide"
+                      hideEffect="slide" modal="true">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Data de Cadastro:" />
+                    <p:calendar value="#{despesaControle.despesa.data_cadastro}"/>
+                    
+                    <p:outputLabel value="Despesa:" />
+                    <p:inputText value="#{despesaControle.despesa.nome}"/>
+                    
+                </h:panelGrid>
+                
+                <br />
+                <h:panelGrid columns="2">
+                    <p:commandButton value="Salvar" icon="fa fa-check" ajax="false" 
+                                     style="background-color: green" actionListener="#{despesaControle.salvar()}"
+                                     action="listadespesa"/>
+                    
+                    <p:commandButton value="Cancelar" icon="fa fa-close" ajax="false" 
+                                     style="background-color: red" action="listadespesa"/>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>

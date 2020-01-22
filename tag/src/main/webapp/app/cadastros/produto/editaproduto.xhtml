@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+        <h:form id="frm">
+            <p:growl autoUpdate="true" />
+            <h:panelGrid columns="2">
+                <p:commandButton value="Salvar" icon="fa fa-check" ajax="false" actionListener="#{produtoControle.salvar()}"
+                                 style="background-color: green" action="listaproduto"/>
+
+                <p:commandButton value="Cancelar" icon="fa fa-close" ajax="false" 
+                                 style="background-color: red" immediate="true" action="listaproduto"/>
+            </h:panelGrid>
+
+            <br/>
+
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12 ui-lg-12">
+                    <div class="card card-w-title">
+                        <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                            <h:panelGroup>
+                                <p:outputLabel value="Data de Cadastro:" />
+                                <p:calendar value="#{produtoControle.produto.data_cadastro}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Nome do Produto:" />
+                                <p:inputText value="#{produtoControle.produto.nome}" required="true" requiredMessage="Informe o Nome do Produto"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Código de Barras:" />
+                                <p:inputText value="#{produtoControle.produto.codigo}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Código Interno:"/> 
+                                <p:inputText value="#{produtoControle.produto.codigo_Interno}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Valor de Entrada:" />
+                                <pe:inputNumber value="#{produtoControle.produto.preco}" style="width: 50%" decimalPlaces="2" minValue="0.00" decimalSeparator="," symbol="R$ "/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Grupo:" />
+                                <p:selectOneMenu value="#{produtoControle.produto.grupo}"
+                                                 converter="#{produtoControle.converterGrupo}">
+                                    <f:selectItems value="#{produtoControle.grupoProdutos()}" 
+                                                   var="gru" itemLabel="#{gru.nome}" itemValue="#{gru}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Unidade de Medida:"/>
+                                <p:selectOneMenu value="#{produtoControle.produto.unidade}">
+                                    <f:selectItems value="#{produtoControle.unidade_Medidas()}"
+                                                   var="uni" itemLabel="#{uni.descricao}"
+                                                   itemValue="#{uni}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Data de Validade:" />
+                                <p:calendar value="#{produtoControle.produto.data_validade}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Marca:"/>
+                                <p:inputText value="#{produtoControle.produto.marca}"/>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <p:outputLabel value="Ativo:"/>
+                                <p:selectBooleanCheckbox value="#{produtoControle.produto.ativo}" />
+
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,92 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/manhattan">
+
+    <div class="layout-sidebar">
+        <div class="sidebar-logo">
+            <a href="dashboard.xhtml">
+                <p:graphicImage name="images/logoMenu.png" library="manhattan-layout" />
+            </a>
+            <a href="#" class="sidebar-anchor animated fadeIn" title="Toggle Menu">
+                <i class="fa"></i>
+            </a>
+        </div>
+
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-container">
+                    <h:form id="menuform">
+                        <pm:menu>
+                            <p:menuitem id="pm_dashboard" value="Página Inicial" icon="fa fa-home" outcome="/app/dashboard" />
+
+                            <p:submenu id="pm_components" label="Cadastros" icon="fa fa-sitemap" styleClass="orange-badge">
+                                <f:attribute name="badge" value="8" />
+                                <p:menuitem value="Banco" outcome="/app/cadastros/banco/listabanco.xhtml"/>
+                                <p:menuitem value="Cadeira" outcome="/app/cadastros/cadeira/listacadeira.xhtml"/>
+                                <p:menuitem value="Convênio" outcome="/app/cadastros/convenio/listaconvenio.xhtml"/>
+                                <p:menuitem value="Doutor(a)" outcome="/app/cadastros/doutor/listadoutor.xhtml"/>
+                                <p:menuitem value="Pessoa" outcome="/app/cadastros/pessoa/listapessoa.xhtml"/>
+                                <p:menuitem value="Plano de Conta" outcome="/app/cadastros/despesa/listadespesa.xhtml"/>
+                                <p:menuitem value="Produto" outcome="/app/cadastros/produto/listaproduto.xhtml"/>
+                                <p:menuitem value="Sala" outcome="/app/cadastros/sala/listasala.xhtml"/>
+                                <p:menuitem value="Serviços Protéticos" outcome="/app/cadastros/servico/listaservico.xhtml"/>
+                                <p:menuitem value="Tratamento" outcome="/app/cadastros/tratamento/listatratamento.xhtml"/>
+                                <p:menuitem value="Usuário" outcome="/app/cadastros/usuario/listausuario.xhtml"/>
+                            </p:submenu>
+
+                            <p:menuitem value="Procedimento" icon="fa fa-stethoscope" outcome="/app/procedimento/listaprocedimento.xhtml"/>
+
+                            <p:menuitem value="Pacientes em Tratamento" icon="fa fa-heartbeat" outcome="/app/listapaciente/listapaciente.xhtml"/>
+
+                            <p:menuitem value="Agendamento de Pacientes" icon="fa fa-list" outcome="/app/agendamento/agendamento.xhtml"/>
+
+                            <p:menuitem value="Contrato de Paciente" icon="fa fa-pencil" outcome="/app/adm-fin/contrato/listacontrato.xhtml"/>
+
+
+                            <p:submenu label="Financeiro" icon="fa fa-usd" styleClass="blue-badge">
+                                <f:attribute name="badge" value="4" />
+                                <p:menuitem value="Contas a Pagar" outcome="/app/adm-fin/contaspagar/listacontaspagar.xhtml"/>
+                                <p:menuitem value="Contas a Receber" outcome="/app/adm-fin/contasreceber/listacontasreceber.xhtml"/>
+                                <p:menuitem value="Caixa" outcome="/app/adm-fin/caixa/listacaixa.xhtml" />
+                                <p:menuitem value="Emissão de Boleto" />
+                                <p:menuitem value="Lançamentos" outcome="/app/adm-fin/lancamentos/listalancamentos.xhtml"/>
+                            </p:submenu>
+
+                            <p:submenu label="Comercial" icon="fa fa-money">
+                                <f:attribute name="badge" value="2" />
+                                <p:menuitem value="Compra" outcome="/app/comercial/compra/listacompra.xhtml"/>
+                                <p:menuitem value="Venda" outcome="/app/comercial/venda/listavenda.xhtml"/>
+                                <p:menuitem value="Ver Estoque" outcome="/app/comercial/estoque/listaestoque.xhtml"/>
+                            </p:submenu>
+
+
+                            <p:submenu id="pm_doc" label="Configurações da Empresa" icon="fa fa-gears">
+                                <p:menuitem value="Cadastro de Empresa" outcome="/app/cadastros/empresa/listaempresa.xhtml"/>
+                                <p:menuitem value="Configuração de Email" outcome="/app/email/listaconfigemail.xhtml">
+                                </p:menuitem>
+                                <p:menuitem value="Permissão de Usuário"/>
+                                <p:menuitem value="Backup do Banco de Dados" />
+                            </p:submenu>
+
+                            <p:submenu label="Relatórios Gerenciais" icon="fa fa-line-chart">
+                                <p:menuitem value="Contas a Pagar por Período" outcome="/app/relatorios/RelatoriosGerenciais/contaspagarperiodo.xhtml"/>
+                                <p:menuitem value="Contas a Receber por Período" outcome="/app/relatorios/RelatoriosGerenciais/contasreceberperiodo.xhtml"/>
+                                <p:menuitem value="Pacientes em Tratamento" onclick="this.form.target = '_blank';"
+                                            actionListener="#{relatorioControle.gerarRelContaPagarPeriodo()}"
+                                            ajax="false"/>
+                            </p:submenu>
+
+                            <p:menuitem value="Sair" action="#{loginControle.logoff()}" ajax="false" icon="fa fa-power-off"/>
+                        </pm:menu>
+                        
+                        <p:commandButton value="Enviar Mensagem" icon="fa fa-envelope" />
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+</ui:composition>

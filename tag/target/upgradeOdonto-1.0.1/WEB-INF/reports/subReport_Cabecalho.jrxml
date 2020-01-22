@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subReport_Cabecalho" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="36aed304-a9bf-4e67-986e-a0b581f460d1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT]]>
+	</queryString>
+	<title>
+		<band height="147" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="206" height="147" uuid="5e2e9b5f-f0ab-4488-8569-a6614bf8b767"/>
+				<imageExpression><![CDATA["/home/jonatas/Imagens/Logos - Upgrade Sistemas/Imagens .jpg/Arte escolhida.jpg"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="408" y="0" width="147" height="147" uuid="a5703eb0-c74f-48ec-aed1-7ed84fe91d4f"/>
+				<imageExpression><![CDATA["/home/jonatas/Imagens/Logos - Upgrade Sistemas/logoUpOdonto.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="232" y="35" width="100" height="20" uuid="93155dc2-3963-4c85-b6e8-5bfe0bd2362b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Upgrade Sistemas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="174" y="55" width="222" height="20" uuid="81a1ca8a-c3ab-479b-a3b6-ab576d58c96f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Endereço: Rua General Euclides Bueno, 999]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="75" width="134" height="20" uuid="91bf5a10-1b14-4ef1-822a-c54260e36509"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Nova Esperança, Paraná]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="174" y="95" width="234" height="20" uuid="1fe9a87a-37d4-48cd-b109-2476b2bad61a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Telefone: (44)3252-2211 - (44)998330366]]></text>
+			</staticText>
+		</band>
+	</title>
+</jasperReport>

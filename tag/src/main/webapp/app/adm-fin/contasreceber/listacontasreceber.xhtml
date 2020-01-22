@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:panelGroup id="pglist" rendered="#{contasReceberControle.layoutList}">
+            <h:form id="formReceber">
+                <p:growl autoUpdate="true" id="msg"/>
+
+                <p:toolbar id="toolbar">
+                    <f:facet name="left">
+                        <p:commandButton value="Nova Conta" icon="fa fa-plus" process="@this" update="dlg"
+                                         oncomplete="PF('dlgReceber').show();" actionListener="#{contasReceberControle.novo()}">
+                            <p:resetInput target="dlg" />
+                        </p:commandButton>
+                    </f:facet>
+                    
+                    <f:facet name="right">
+                        
+                        <p:commandButton icon="fa fa-gavel" title="Faturar Conta" value="Faturar"
+                                         process="@this" update="dlg" style="background-color: green"
+                                         oncomplete="PF('dlgReceber').show()"
+                                         disabled="#{contasReceberControle.contasReceber == null or contasReceberControle.contasReceber.contasPagarStatus=='RECEBIDO'}">
+                            <p:resetInput target="dlg" />
+
+                            <f:setPropertyActionListener value="#{contasReceberControle.contasReceber}" 
+                                                         target="#{contasReceberControle.contasReceberEdicao}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Editar" icon="fa fa-pencil" style="background-color: #093669"
+                                         disabled="#{contasReceberControle.contasReceber == null or contasReceberControle.contasReceber.contasPagarStatus=='RECEBIDO'}"/>
+
+                        <p:commandButton icon="ui-icon-trash" title="Excluir" style="background-color: red"
+                                         disabled="#{contasReceberControle.contasReceber == null or contasReceberControle.contasReceber.contasPagarStatus=='RECEBIDO'}" 
+                                         value="Excluir"/>
+                    </f:facet>
+                </p:toolbar>
+                <br/>
+                <p:dataTable id="tabela" value="#{contasReceberControle.listaReceber()}" var="cr" paginator="true"
+                             paginatorPosition="bottom" rows="15" emptyMessage="Nenhuma Conta a Receber registrada."
+                             selection="#{contasReceberControle.contasReceber}" rowKey="#{cr.id}" selectionMode="single">
+
+                    <p:ajax event="rowSelect" update=":formReceber:toolbar" />
+                    <p:ajax event="rowUnselect" update=":formReceber:toolbar" />
+
+                    <p:column headerText="Descrição" style="width: 15%;" filterBy="#{cr.pessoa.nome}" filterMatchMode="contains">
+                        #{cr.pessoa.nome}
+                    </p:column>
+
+                    <p:column headerText="Lançamento" style="width: 9%; text-align: center">
+                        <h:outputText value="#{cr.crDataLancamento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                        </h:outputText>                     
+                    </p:column>
+
+                    <p:column headerText="Vencimento" style="width: 9%; text-align: center">
+                        <h:outputText value="#{cr.crDataVencimento}" style="color: red">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                        </h:outputText>                     
+                    </p:column>
+
+                    <p:column headerText="Pagamento" style="width: 8%; text-align: center">
+                        <h:outputText rendered="#{cr.crDataRecebimento!=null}" value="#{cr.crDataRecebimento}" style="color: green">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                        </h:outputText>
+                        <h:outputText rendered="#{cr.crDataRecebimento==null}" value="Pendente" style="color: red"/>
+                    </p:column>
+
+                    <p:column headerText="Valor" style="width: 8%;text-align: center">
+                        <h:outputText value="#{cr.crValor}">
+                            <f:convertNumber type="currency" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Parcela" style="width: 6%;text-align: center">
+                        <h:outputText value="#{cr.crNumParcela}"/>
+                    </p:column>
+
+                    <p:column headerText="Status" style="width: 7%; text-align: center">
+                        <h:outputText value="#{cr.contasPagarStatus.descricao}"/>                        
+                    </p:column>
+
+                    <p:column headerText="Observação" style="width: 12%">
+                        <h:outputText value="#{cr.obs}"/>                        
+                    </p:column>     
+                </p:dataTable>
+
+                <p:dialog id="dlg" modal="true" widgetVar="dlgReceber" header="Receber Conta" width="600">
+                    <p:panelGrid id="pgReceber" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                        <h:panelGroup>
+                            <h:outputText value="Descrição:" style="color: #000000"/><br/>
+                            <h:outputText value="#{contasReceberControle.contasReceber.pessoa.nome}" style="color: green"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <h:outputText value="Data de Vencimento:" style="color: #000000"/><br/>
+                            <h:outputText value="#{contasReceberControle.contasReceber.crDataVencimento}" style="color: red">
+                                <f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <h:outputText value="Número da Parcela:" style="color: #000000"/><br/>
+                            <h:outputText value="#{contasReceberControle.contasReceber.crNumParcela}" />
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <h:outputText value="#{contasReceberControle.contasReceber.crValor}" style="font-size: 150%; color: green">
+                                <f:convertNumber type="currency" currencySymbol="R$ " maxFractionDigits="2"/>
+                            </h:outputText>
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                    <br/>
+                    <p:panel header="Receber Conta">
+                        <p:panelGrid id="pg2" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+                            <h:panelGroup>
+                                <h:outputText value="Valor a Receber" style="color: #000000"/><br/>
+                                <p:inputText value="#{contasReceberControle.contasReceber.crValor}" style="width: 80%">
+                                    <f:convertNumber type="currency" locale="pt_BR" currencySymbol="R$" maxFractionDigits="2"/>
+                                </p:inputText>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:panelGroup>
+                                    <h:outputText value="Tipo de Pagamento:" style="color: #000000"/><br/>
+                                    <p:selectOneMenu value="#{contasReceberControle.contasReceber.tipoPagamento}"
+                                                     style="width: 80%">
+                                        <f:selectItems value="#{contasReceberControle.tipoPagamentos}" 
+                                                       var="p" itemLabel="#{p.descricao}" itemValue="#{p}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <h:outputText value="Observação:" style="color: #000000"/><br/>
+                                <p:inputTextarea value="#{contasReceberControle.contasReceber.obs}" />
+                            </h:panelGroup>
+                        </p:panelGrid>
+
+                        <br/>
+
+                        <p:commandButton value="Receber Conta" icon="fa fa-check" style="background-color: green" 
+                                         actionListener="#{contasReceberControle.alterarForm()}" ajax="false"
+                                         update=":formReceber:tabela:"/>
+
+                    </p:panel>
+                </p:dialog>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
